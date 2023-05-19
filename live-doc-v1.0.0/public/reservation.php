@@ -44,6 +44,35 @@ date_default_timezone_set("Asia/Jakarta");
 					</div>
 					<form>
 						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<span class="form-label">Dokter</span>
+									<select class="form-control" required id="dokter">
+									<?php
+										$conn = new mysqli("localhost", "root", "", "dbmagang");
+										
+										$sql = "SELECT * from dokters";
+
+
+										$stmt = $conn->prepare($sql);
+										$stmt->execute();
+										$result = $stmt->get_result();
+
+										if ($result->num_rows > 0) {
+
+											$curhour = date("H.i");
+											while ($row = $result->fetch_assoc()) {
+												echo "<option value='" . $row["id"] . "'>" . $row["nama"] . "</option>";
+											}
+										}
+
+										?>
+									</select>
+									<span class="select-arrow"></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 									<span class="form-label">Tanggal Reservasi</span>
@@ -57,17 +86,19 @@ date_default_timezone_set("Asia/Jakarta");
 										<?php
 										$conn = new mysqli("localhost", "root", "", "dbmagang");
 										$tanggalHariIni = date('Y-m-d');
-										$id = 9;
+										$id1 = 19;
+										$id2 = 20;
+										$iddokter = 1;
 										if ($_SESSION['email'] == "klinik") {
 											$sql = "SELECT * from jams
-													where idjam not in (select jam_idjam 
+													where id not in (select jam_id 
 													from reservasis
-													where tanggal_reservasi = ? and jam_idjam !=" . $id . ")";
+													where tanggal_reservasi = ? and jam_id != " . $id1 . " and jam_id != " . $id2 . ") and dokter_id = ".$iddokter;
 										} else {
 											$sql = "SELECT * from jams
-											where idjam not in (select jam_idjam 
+											where id not in (select jam_id
 											from reservasis
-											where tanggal_reservasi = ?) and idjam !=" . $id;
+											where tanggal_reservasi = ?) and id !=" . $id1 . " and id !=" . $id2 . " and dokter_id=". $iddokter;
 										}
 
 
@@ -80,8 +111,8 @@ date_default_timezone_set("Asia/Jakarta");
 
 											$curhour = date("H.i");
 											while ($row = $result->fetch_assoc()) {
-												if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
-													echo "<option value='" . $row["idjam"] . "'>" . $row["jam"] . "</option>";
+												if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya Toton Yuswanto' || $row['jam'] == 'lainnya Umi Yuswanto') {
+													echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
 												}
 											}
 										}
