@@ -43,7 +43,7 @@
             $idReservasi = $_GET['idReservasi'];
             $sql = "SELECT R.*, P.nama, P.id 
             FROM reservasis as R 
-            inner join penggunas as P on R.id_pengguna=P.id 
+            inner join penggunas as P on R.pengguna_id=P.id 
             WHERE R.id=?";
 
             $stmt = $conn->prepare($sql);
@@ -126,7 +126,7 @@
                       $conn = new mysqli("localhost", "root", "", "dbmagang");
                       $tanggalHariIni = date('Y-m-d');
                       $sql = "SELECT * from jams
-														where idjam not in (select jam_idjam 
+														where id not in (select jam_id
 														from reservasis
 														where tanggal_reservasi = ?)";
                       $stmt = $conn->prepare($sql);

@@ -40,7 +40,6 @@
                         <?php
                         session_start();
                         $email = $_SESSION['email'];
-                        
 
                         $conn = new mysqli("localhost", "root", "", "dbmagang");
                         $sql = "SELECT * 
@@ -92,7 +91,7 @@
                                             $sql = "SELECT K.id, date(K.tanggal_konsultasi) as tanggal_konsultasi, K.keterangan, K.obat, K.biaya, U.ulasan
                                             from konsultasis as K
                                             LEFT JOIN reservasis AS R ON K.reservasi_id = R.id 
-                                            LEFT JOIN penggunas AS P ON R.id_pengguna = P.id
+                                            LEFT JOIN penggunas AS P ON R.pengguna_id = P.id
                                             LEFT JOIN ulasans AS U ON K.id = U.konsultasi_id
                                             where P.email = ?
                                             ORDER BY K.tanggal_konsultasi desc";

@@ -46,7 +46,7 @@
 
                         <h1>Hello, <br /><strong>Please</strong> Sign Up <strong>to Create </strong>Your Account</h1>
 
-                        <p class="fs-1 mb-5">You can get the care you need 24/7 – be it online or in <br />person. You will be treated by caring specialist doctors. </p>
+                        <p class="fs-1 mb-5">You can get the care you need 24/7 - be it online or in <br />person. You will be treated by caring specialist doctors. </p>
                         <div class="col-md-6">
                             <label class="visually-hidden" for="inputPhone">Phone</label>
                             <h5><strong>&nbsp;Full Name</strong></h5>

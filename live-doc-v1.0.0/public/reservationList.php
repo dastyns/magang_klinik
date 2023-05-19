@@ -157,8 +157,8 @@ session_start();
                                 if ($pengguna == "klinik") {
                                     $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi, J.jam, R.keluhan, R.id
                                                 FROM penggunas as P 
-                                                INNER JOIN reservasis as R on P.id = R.id_pengguna
-                                                INNER JOIN jams as J on J.idjam = R.jam_idjam
+                                                INNER JOIN reservasis as R on P.id = R.pengguna_id
+                                                INNER JOIN jams as J on J.id = R.jam_id
                                                 WHERE date(R.tanggal_reservasi) >= curdate() and R.status_reservasi='1'
                                                 order by date(R.tanggal_reservasi), J.jam, R.id";
 
@@ -180,8 +180,8 @@ session_start();
                                 else{
                                     $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi, J.jam, R.keluhan, R.id
                                                 FROM penggunas as P 
-                                                INNER JOIN reservasis as R on P.id = R.id_pengguna
-                                                INNER JOIN jams as J on J.idjam = R.jam_idjam
+                                                INNER JOIN reservasis as R on P.id = R.pengguna_id
+                                                INNER JOIN jams as J on J.id = R.jam_id
                                                 WHERE date(R.tanggal_reservasi) >= curdate() and R.status_reservasi='1' and P.email=?
                                                 order by date(R.tanggal_reservasi), J.jam";
 
