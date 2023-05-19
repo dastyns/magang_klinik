@@ -5,7 +5,7 @@
 
 	$sql = "SELECT date(R.tanggal_reservasi) as tanggalReservasi, R.jam, R.keluhan, R.id
 			FROM reservasis as R 
-			INNER JOIN penggunas as P on P.id = R.id_pengguna
+			INNER JOIN penggunas as P on P.id = R.pengguna_id
 			WHERE date(R.tanggal_reservasi) >= curdate() and R.status_reservasi='1' and P.email = ?";
 
 		$stmt = $conn->prepare($sql);

@@ -31,11 +31,11 @@ if ($conn->connect_error) {
 	$arr = ["result" => "error", "message" => "Error Connect DB"];
 } else {
 	if ($tanggalbalik == "") {
-		$sql = "INSERT into konsultasis(keterangan, obat, biaya, status_konsultasi, id_reservasi) VALUES(?,?,?,?,?)";
+		$sql = "INSERT into konsultasis(keterangan, obat, biaya, status_konsultasi, reservasi_id) VALUES(?,?,?,?,?)";
 		$stmt = $conn->prepare($sql);
 		$stmt->bind_param("ssisi", $keterangan, $obat, $biaya, $status, $idReservasi);
 	} else {
-		$sql = "INSERT into konsultasis(keterangan, obat, biaya, status_konsultasi, tanggal_balik, id_reservasi) VALUES(?,?,?,?,?,?)";
+		$sql = "INSERT into konsultasis(keterangan, obat, biaya, status_konsultasi, tanggal_balik, reservasi_id) VALUES(?,?,?,?,?,?)";
 		$stmt = $conn->prepare($sql);
 		$stmt->bind_param("ssissi", $keterangan, $obat, $biaya, $status, $tanggalbalik, $idReservasi);
 	}
@@ -43,7 +43,7 @@ if ($conn->connect_error) {
 	if ($stmt->affected_rows > 0) {
 		if ($tanggalbalik != "") {
 			$status = "1";
-			$sql = "INSERT into reservasis(tanggal_reservasi, id_pengguna, status_reservasi, jam_idjam) VALUES(?,?,?,?)";
+			$sql = "INSERT into reservasis(tanggal_reservasi, pengguna_id, status_reservasi, jam_id) VALUES(?,?,?,?)";
 			$stmt = $conn->prepare($sql);
 			$stmt->bind_param("siss", $tanggalbalik, $idPengguna, $status, $jam);
 			$stmt->execute();

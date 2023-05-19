@@ -4,13 +4,13 @@
 
 	$sql = "SELECT P.nama, KO.tanggal_konsultasi, KO.tanggal_balik, P.id
 			FROM penggunas as P
-			INNER JOIN reservasis AS R on P.id = R.id_pengguna
-			INNER JOIN konsultasis as KO on R.id = KO.id_reservasi
+			INNER JOIN reservasis AS R on P.id = R.pengguna_id
+			INNER JOIN konsultasis as KO on R.id = KO.reservasi_id
 			WHERE KO.id in (
 			SELECT MAX(K.id)
 			FROM konsultasis as K
-			INNER JOIN reservasis AS R ON R.id = K.id_reservasi
-			GROUP BY R.id_pengguna);";
+			INNER JOIN reservasis AS R ON R.id = K.reservasi_id
+			GROUP BY R.pengguna_id);";
 	    
 		$result = $conn->query($sql);
 

@@ -8,8 +8,8 @@
 	$sql1 = "SELECT U.konsultasi_id, U.ulasan 
 			from ulasans as U
 			inner join konsultasis as K on K.id = U.konsultasi_id
-			inner join reservasis as R on R.id = K.id_reservasi
-			inner join penggunas as P on P.id = R.id_pengguna
+			inner join reservasis as R on R.id = K.reservasi_id
+			inner join penggunas as P on P.id = R.pengguna_id
 			where P.email = ?";
 
 	$stmt1 = $conn->prepare($sql1);
@@ -24,8 +24,8 @@
 
 	$sql = "SELECT K.id, K.tanggal_konsultasi, K.keterangan, K.obat, K.biaya 
 			from konsultasis as K
-			INNER JOIN reservasis AS R ON K.id_reservasi = R.id 
-			INNER JOIN penggunas AS P ON R.id_pengguna = P.id
+			INNER JOIN reservasis AS R ON K.reservasi_id = R.id 
+			INNER JOIN penggunas AS P ON R.pengguna_id = P.id
 			where P.email = ?
 			ORDER BY K.tanggal_konsultasi desc";
 	    

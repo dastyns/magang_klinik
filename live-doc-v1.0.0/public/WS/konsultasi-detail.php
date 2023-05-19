@@ -29,8 +29,8 @@
 
 	$sql = "SELECT K.tanggal_konsultasi, K.keterangan, K.obat, K.biaya, U.ulasan
 			from konsultasis as K
-			INNER JOIN reservasis AS R ON K.id_reservasi = R.id 
-			INNER JOIN penggunas AS P ON R.id_pengguna = P.id
+			INNER JOIN reservasis AS R ON K.reservasi_id = R.id 
+			INNER JOIN penggunas AS P ON R.pengguna_id = P.id
 			INNER JOIN ulasans AS U ON U.konsultasi_id = K.id
 			where P.id = ?";
 	$stmt = $conn->prepare($sql);

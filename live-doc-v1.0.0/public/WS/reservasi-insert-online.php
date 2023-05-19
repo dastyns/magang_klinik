@@ -26,7 +26,7 @@ if ($conn->connect_error) {
 			$row = $result->fetch_assoc();
 			$curdate = date('Y-m-d');
 
-			$sql2 = "SELECT * FROM reservasis where id_pengguna=? and date(tanggal_reservasi)=?";
+			$sql2 = "SELECT * FROM reservasis where pengguna_id=? and date(tanggal_reservasi)=?";
 			$stmt2 = $conn->prepare($sql2);
 			$stmt2->bind_param("is", $row["id"], $curdate);
 			$stmt2->execute();
@@ -36,7 +36,7 @@ if ($conn->connect_error) {
 				$arr = ["result" => "error", "message" => "Batas melakukan reservasi hanya 1 kali per hari"];
 			} else {
 				$status = "1";
-				$sql = "INSERT into reservasis(tanggal_reservasi,keluhan, id_pengguna, status_reservasi, jam_idjam) VALUES(?,?,?,?,?)";
+				$sql = "INSERT into reservasis(tanggal_reservasi,keluhan, pengguna_id, status_reservasi, jam_id) VALUES(?,?,?,?,?)";
 				$stmt = $conn->prepare($sql);
 				$stmt->bind_param("ssiss", $tanggalReservasi, $keluhan, $row["id"], $status, $jam);
 				$stmt->execute();
