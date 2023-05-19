@@ -28,7 +28,7 @@ if ($tanggalRes < $curdate) {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id 
 					from reservasis
-					where tanggal_reservasi = ? and jam_id !=" . $id1 . " and jam_id !=" . $id2 . ") and dokter_id = " . $dokter;
+					where tanggal_reservasi = ?) and dokter_id = " . $dokter;
 		} else {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id
