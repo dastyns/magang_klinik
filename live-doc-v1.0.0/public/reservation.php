@@ -93,7 +93,7 @@ date_default_timezone_set("Asia/Jakarta");
 											$sql = "SELECT * from jams
 													where id not in (select jam_id 
 													from reservasis
-													where tanggal_reservasi = ? and jam_id != " . $id1 . " and jam_id != " . $id2 . ") and dokter_id = ".$iddokter;
+													where tanggal_reservasi = ?) and dokter_id = ".$iddokter;
 										} else {
 											$sql = "SELECT * from jams
 											where id not in (select jam_id
