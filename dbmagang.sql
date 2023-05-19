@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2023 at 04:58 PM
+-- Generation Time: May 19, 2023 at 05:36 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.30
 
@@ -74,7 +74,9 @@ INSERT INTO `jams` (`idjam`, `jam`, `dokter_id`) VALUES
 (15, '19.30', 1),
 (16, '20.00', 1),
 (17, '20.30', 1),
-(18, '21.00', 1);
+(18, '21.00', 1),
+(19, 'lainnya Toton Yuswanto', 1),
+(20, 'lainnya Umi Yuswanto', 2);
 
 -- --------------------------------------------------------
 
@@ -90,7 +92,7 @@ CREATE TABLE `konsultasis` (
   `biaya` double DEFAULT NULL,
   `status` enum('0','1') DEFAULT NULL,
   `tanggal_balik` datetime DEFAULT NULL,
-  `id_reservasi` int(11) NOT NULL
+  `reservasi_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -141,7 +143,7 @@ CREATE TABLE `ulasans` (
   `id` int(11) NOT NULL,
   `tanggal_ulasan` datetime DEFAULT NULL,
   `ulasan` varchar(500) DEFAULT NULL,
-  `konsultasis_id` int(11) NOT NULL
+  `konsultasi_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -176,8 +178,8 @@ ALTER TABLE `jams`
 -- Indexes for table `konsultasis`
 --
 ALTER TABLE `konsultasis`
-  ADD PRIMARY KEY (`id`,`id_reservasi`),
-  ADD KEY `fk_konsultasi_reservasi_idx` (`id_reservasi`);
+  ADD PRIMARY KEY (`id`,`reservasi_id`),
+  ADD KEY `fk_konsultasis_reservasis1_idx` (`reservasi_id`);
 
 --
 -- Indexes for table `penggunas`
@@ -198,7 +200,7 @@ ALTER TABLE `reservasis`
 --
 ALTER TABLE `ulasans`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_ulasans_konsultasis1_idx` (`konsultasis_id`);
+  ADD KEY `fk_ulasans_konsultasis1_idx` (`konsultasi_id`);
 
 --
 -- Indexes for table `ulasan_baiks`
@@ -221,7 +223,7 @@ ALTER TABLE `dokters`
 -- AUTO_INCREMENT for table `jams`
 --
 ALTER TABLE `jams`
-  MODIFY `idjam` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `idjam` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `konsultasis`
@@ -267,7 +269,7 @@ ALTER TABLE `jams`
 -- Constraints for table `konsultasis`
 --
 ALTER TABLE `konsultasis`
-  ADD CONSTRAINT `fk_konsultasi_reservasi` FOREIGN KEY (`id_reservasi`) REFERENCES `reservasis` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_konsultasis_reservasis1` FOREIGN KEY (`reservasi_id`) REFERENCES `reservasis` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `reservasis`
@@ -280,7 +282,7 @@ ALTER TABLE `reservasis`
 -- Constraints for table `ulasans`
 --
 ALTER TABLE `ulasans`
-  ADD CONSTRAINT `fk_ulasans_konsultasis1` FOREIGN KEY (`konsultasis_id`) REFERENCES `konsultasis` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_ulasans_konsultasis1` FOREIGN KEY (`konsultasi_id`) REFERENCES `konsultasis` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `ulasan_baiks`
