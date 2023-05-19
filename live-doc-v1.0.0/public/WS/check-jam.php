@@ -13,6 +13,7 @@ $tanggalReservasi = $_POST['tanggalReservasi'];
 $user = $_POST['user'];
 $tanggalRes = strtotime($tanggalReservasi);
 $curdate = strtotime(date('Y-m-d'));
+$dokter = $_POST['dokter'];
 
 if ($tanggalRes < $curdate) {
 	echo "warning";
@@ -21,19 +22,18 @@ if ($tanggalRes < $curdate) {
 	if ($conn->connect_error) {
 		$arr = ["result" => "error", "message" => "Error Connect DB"];
 	} else {
-		$id1=19;
-		$id2=20;
-		$dokter=1;
+		$id1 = 19;
+		$id2 = 20;
 		if ($user == "klinik") {
 			$sql = "SELECT * from jams
-			where id not in (select jam_id 
-			from reservasis
-			where tanggal_reservasi = ? and jam_id !=". $id1." and jam_id !=". $id2.") and dokter_id = ".$dokter;
+					where id not in (select jam_id 
+					from reservasis
+					where tanggal_reservasi = ? and jam_id !=" . $id1 . " and jam_id !=" . $id2 . ") and dokter_id = " . $dokter;
 		} else {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id
 					from reservasis
-					where tanggal_reservasi = ?) and id !=". $id1 ." and id !=". $id2 . " and dokter_id = ".$dokter;
+					where tanggal_reservasi = ?) and id !=" . $id1 . " and id !=" . $id2 . " and dokter_id = " . $dokter;
 		}
 		$stmt = $conn->prepare($sql);
 		$stmt->bind_param("s", $tanggalReservasi);
