@@ -56,11 +56,11 @@ session_start();
             <?php
             if (isset($_SESSION["email"])) {
               if ($_SESSION["email"] == "klinik") {
-                echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>reservation</a></li>";
-                echo "<li class='nav-item px-2'><a class='nav-link' href='consultation.php'>consultation Dokter</a></li>";
+                echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>Reservasi</a></li>";
+                echo "<li class='nav-item px-2'><a class='nav-link' href='consultation.php'>Konsultasi Dokter</a></li>";
               } else {
-                echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>reservation</a></li>";
-                echo "<li class='nav-item px-2'><a class='nav-link' href='detilkonsulpasien.php'>consultation Pasien</a></li>";
+                echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>Reservasi</a></li>";
+                echo "<li class='nav-item px-2'><a class='nav-link' href='detilkonsulpasien.php'>Konsultasi Pasien</a></li>";
               }
             }
             ?>

@@ -2,7 +2,7 @@
 
 session_start();
 
-$nomor_telepon = $_SESSION['email'];
+$email = $_SESSION['email'];
 $tanggalReservasi = $_POST['tanggalReservasi'];
 $jam = $_POST['jam'];
 $keluhan = $_POST['keluhan'];
@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 	if ($jam != "") {
 		$sql1 = "SELECT id FROM penggunas where email=?";
 		$stmt = $conn->prepare($sql1);
-		$stmt->bind_param("s", $nomor_telepon);
+		$stmt->bind_param("s", $email);
 		$stmt->execute();
 		$result = $stmt->get_result();
 

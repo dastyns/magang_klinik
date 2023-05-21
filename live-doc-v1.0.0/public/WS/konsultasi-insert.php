@@ -15,6 +15,7 @@ function update($con, $id)
 
 	return $arr;
 }
+
 $idReservasi = $_POST['idReservasi'];
 $obat = $_POST['obat'];
 $biaya = $_POST['biaya'];
@@ -23,6 +24,7 @@ $tanggalbalik = $_POST['tanggalbalik'];
 $status = "1";
 $jam = $_POST['jam'];
 $idPengguna = $_POST['idPengguna'];
+$tanggalkonsul = $_POST['tanggal'];
 
 
 $conn = new mysqli("localhost", "root", "", "dbmagang");

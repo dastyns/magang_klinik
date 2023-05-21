@@ -93,17 +93,18 @@ date_default_timezone_set("Asia/Jakarta");
 											$sql = "SELECT * from jams
 													where id not in (select jam_id 
 													from reservasis
-													where tanggal_reservasi = ?) and dokter_id = ".$iddokter;
+													where tanggal_reservasi = ?) and dokter_id = ?";
+											$stmt = $conn->prepare($sql);
+											$stmt->bind_param("si", $tanggalHariIni, $iddokter);
 										} else {
 											$sql = "SELECT * from jams
 											where id not in (select jam_id
 											from reservasis
-											where tanggal_reservasi = ?) and id !=" . $id1 . " and id !=" . $id2 . " and dokter_id=". $iddokter;
+											where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id= ?";
+											$stmt = $conn->prepare($sql);
+											$stmt->bind_param("siii", $tanggalHariIni, $id1, $id2, $iddokter);
 										}
-
-
-										$stmt = $conn->prepare($sql);
-										$stmt->bind_param("s", $tanggalHariIni);
+										
 										$stmt->execute();
 										$result = $stmt->get_result();
 
@@ -111,7 +112,7 @@ date_default_timezone_set("Asia/Jakarta");
 
 											$curhour = date("H.i");
 											while ($row = $result->fetch_assoc()) {
-												if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya Toton Yuswanto' || $row['jam'] == 'lainnya Umi Yuswanto') {
+												if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
 													echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
 												}
 											}
@@ -139,13 +140,9 @@ date_default_timezone_set("Asia/Jakarta");
 										<input class='form-control' id='nama'>
 									</div>
 								</div>
-								&nbsp;
 							</div>";
 						}
 						?>
-
-
-
 						<div class="row">
 							<div class="col-md-10">
 								<div class="form-group">
@@ -167,7 +164,6 @@ date_default_timezone_set("Asia/Jakarta");
 <script>
 	$('body').on('click', '#btnKonfirmasi', function(event) {
 		event.preventDefault();
-		alert($("#user").val());
 		var tanggalReservasi = $("#tanggal").val();
 		var keluhan = $("#keluhan").val();
 		var jam = $("#jam").val();
@@ -244,7 +240,38 @@ date_default_timezone_set("Asia/Jakarta");
 		var tanggalReservasi = $("#tanggal").val();
 		var user = $("#user").val();
 		var dokter = $('#dokter').val();
+
 		$.post("WS/check-jam.php", {
+			tanggalReservasi: tanggalReservasi,
+			user: user,
+			dokter: dokter
+
+		}).done(function(data) {
+			if (data != "warning") {
+				$("#jam").html(data);
+				$("#btnKonfirmasi").attr("disabled", false);
+				// if ($('#datangLangsung').is(":checked")) {
+				// 	$("#jam").attr("disabled", true);
+				// } else {
+				// 	$("#jam").attr("disabled", false);
+				// }
+				$("#jam").attr("disabled", false);
+				$("#keluhan").attr("disabled", false);
+			} else {
+				alert("Silahkan memilih tanggal yang sesuai");
+				$("#btnKonfirmasi").attr("disabled", true);
+				$("#jam").attr("disabled", true);
+				$("#keluhan").attr("disabled", true);
+			}
+
+		});
+	});
+
+	$('body').on('change', '#dokter', function() {
+		var tanggalReservasi = $("#tanggal").val();
+		var user = $("#user").val();
+		var dokter = $('#dokter').val();
+		$.post("WS/check-doctors.php", {
 			tanggalReservasi: tanggalReservasi,
 			user: user,
 			dokter: dokter

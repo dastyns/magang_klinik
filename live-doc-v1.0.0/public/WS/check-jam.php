@@ -28,15 +28,17 @@ if ($tanggalRes < $curdate) {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id 
 					from reservasis
-					where tanggal_reservasi = ?) and dokter_id = " . $dokter;
+					where tanggal_reservasi = ?) and dokter_id = ?";
+			$stmt = $conn->prepare($sql);
+			$stmt->bind_param("si", $tanggalReservasi, $dokter);
 		} else {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id
 					from reservasis
-					where tanggal_reservasi = ?) and id !=" . $id1 . " and id !=" . $id2 . " and dokter_id = " . $dokter;
+					where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id = ?";
+			$stmt = $conn->prepare($sql);
+			$stmt->bind_param("siii",$tanggalReservasi, $id1, $id2, $dokter);
 		}
-		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("s", $tanggalReservasi);
 		$stmt->execute();
 		$result = $stmt->get_result();
 
@@ -44,7 +46,7 @@ if ($tanggalRes < $curdate) {
 			$curhour = date("H.i");
 			if ($curdate == $tanggalRes) {
 				while ($row = $result->fetch_assoc()) {
-					if (strtotime($row["jam"]) >= strtotime($curhour) || $row['jam'] == "lainnya Toton Yuswanto" || $row['jam'] == "lainnya Umi Yuswanto") {
+					if (strtotime($row["jam"]) >= strtotime($curhour) || $row['jam'] == "lainnya") {
 						echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
 					}
 				}

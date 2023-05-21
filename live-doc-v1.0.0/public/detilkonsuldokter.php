@@ -109,7 +109,12 @@
                                                     echo "<td class='tabel'>" . $row["obat"] . "</td>";
                                                     echo "<td class='tabel'>Rp " . $row["biaya"] . "</td>";
                                                     echo "<td class='tabel'>" . $row["ulasan"] . "</td>";
-                                                    echo "<td class='tabel'><button type='button' id='btnTampilkanUlasan' class='btnDetil' value='" . $row["id"] . "'>Tampilkan Ulasan</button></td>";
+                                                    if($row["ulasan"] == ""){
+                                                        echo "<td class='tabel'><button type='button' id='btnTampilkanUlasan' class='btnDetil' value='" . $row["id"] . "' hidden>Tampilkan Ulasan</button></td>";
+                                                    }
+                                                    else{
+                                                        echo "<td class='tabel'><button type='button' id='btnTampilkanUlasan' class='btnDetil' value='" . $row["id"] . "'>Tampilkan Ulasan</button></td>";
+                                                    }
                                                     echo "</tr>";
                                                 }
                                             }

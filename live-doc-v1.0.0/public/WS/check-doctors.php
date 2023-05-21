@@ -8,6 +8,13 @@ error_reporting(E_ERROR | E_PARSE);
 clearstatcache();
 $conn = new mysqli("localhost", "root", "", "dbmagang");
 
+
+$tanggalReservasi = $_POST['tanggalReservasi'];
+$user = $_POST['user'];
+$tanggalRes = strtotime($tanggalReservasi);
+$curdate = strtotime(date('Y-m-d'));
+$dokter = $_POST['dokter'];
+
 if ($tanggalRes < $curdate) {
 	echo "warning";
 } else {
@@ -15,20 +22,23 @@ if ($tanggalRes < $curdate) {
 	if ($conn->connect_error) {
 		$arr = ["result" => "error", "message" => "Error Connect DB"];
 	} else {
-		$id=9;
+		$id1 = 19;
+		$id2 = 20;
 		if ($user == "klinik") {
 			$sql = "SELECT * from jams
-			where id not in (select jam_id 
-			from reservasis
-			where tanggal_reservasi = ? and jam_id !=". $id.")";
+					where id not in (select jam_id 
+					from reservasis
+					where tanggal_reservasi = ?) and dokter_id = " . $dokter;
+			$stmt = $conn->prepare($sql);
+			$stmt->bind_param("si", $tanggalReservasi, $dokter);
 		} else {
 			$sql = "SELECT * from jams
-					where idjam not in (select jam_id 
+					where id not in (select jam_id
 					from reservasis
-					where tanggal_reservasi = ?) and id !=". $id;
+					where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id = ?";
 		}
 		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("s", $tanggalReservasi);
+		$stmt->bind_param("siii", $tanggalReservasi, $id1, $id2, $dokter);
 		$stmt->execute();
 		$result = $stmt->get_result();
 

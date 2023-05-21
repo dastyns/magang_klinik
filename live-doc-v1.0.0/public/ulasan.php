@@ -130,7 +130,10 @@
                 
             }).done(function(data) {
                 var result = JSON.parse(data);
+                alert(result);
+                alert(result.result);
                 if (result.result == "success") {
+                    alert(result.message);
                     window.location = "detilkonsulpasien.php";
                 }else{
                     alert(result.message);

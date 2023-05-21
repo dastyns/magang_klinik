@@ -39,6 +39,7 @@
             <h3>Konsultasi</h3>
             <!-- <p class="mb-4">Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur adipisicing.</p> -->
             <?php
+            date_default_timezone_set("Asia/Jakarta");
             $conn = new mysqli("localhost", "root", "", "dbmagang");
             $idReservasi = $_GET['idReservasi'];
             $sql = "SELECT R.*, P.nama, P.id 
@@ -113,38 +114,75 @@
               </div>
               <input type="checkbox" id="checkTanggalBalik"> Tanggal Balik
               <br><br>
-              <div class="row" id="divTanggalBalik" hidden>
-                <div class="col-md-6">
-                  <label id="test">Tanggal Balik</label>
-                  <input type="date" value=<?php echo "'" . date('Y-m-d') . "'"; ?> class="form-control" id="tanggal_balik">
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>Jam Datang</label>
-                    <select class="form-control" id="jam">
-                      <?php
-                      $conn = new mysqli("localhost", "root", "", "dbmagang");
-                      $tanggalHariIni = date('Y-m-d');
-                      $sql = "SELECT * from jams
-														where id not in (select jam_id
-														from reservasis
-														where tanggal_reservasi = ?)";
-                      $stmt = $conn->prepare($sql);
-                      $stmt->bind_param("s", $tanggalHariIni);
-                      $stmt->execute();
-                      $result = $stmt->get_result();
 
-                      if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                          echo "<option value='" . $row["idjam"] . "'>" . $row["jam"] . "</option>";
+              <div id="divTanggalBalik" hidden>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group first">
+                      <label>Dokter</label>
+                      <select class="form-control" required id="dokter">
+                        <?php
+                        $conn = new mysqli("localhost", "root", "", "dbmagang");
+
+                        $sql = "SELECT * from dokters";
+
+
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+
+                          $curhour = date("H.i");
+                          while ($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row["id"] . "'>" . $row["nama"] . "</option>";
+                          }
                         }
-                      }
 
-                      ?>
-                    </select>
-                    <span class="select-arrow"></span>
+                        ?>
+                      </select>
+                      <span class="select-arrow"></span>
+                    </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label id="test">Tanggal Balik</label>
+                    <input type="date" value=<?php echo "'" . date('Y-m-d') . "'"; ?> class="form-control" id="tanggal_balik">
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Jam Datang</label>
+                      <select class="form-control" id="jam">
+                        <?php
+                        $conn = new mysqli("localhost", "root", "", "dbmagang");
+                        $tanggalHariIni = date('Y-m-d');
+                        $dokter = 1;
+                        $sql = "SELECT * from jams
+														where id not in (select jam_id
+														from reservasis
+														where tanggal_reservasi = ?) and dokter_id = ?";
+
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("si", $tanggalHariIni, $dokter);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+                          while ($row = $result->fetch_assoc()) {
+                            if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
+                              echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
+                            }
+                          }
+                        }
+
+                        ?>
+                      </select>
+                      <span class="select-arrow"></span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               <br>
@@ -180,12 +218,17 @@
 
       var tanggalbalik = "";
       var jam = "";
-
+      alert(tanggal);
       if ($("#checkTanggalBalik").is(":checked")) {
         tanggalbalik = $("#tanggal_balik").val();
         jam = $("#jam").val();
       }
-      alert(tanggalbalik);
+      // alert(tanggalbalik);
+      // alert(keterangan);
+      // alert(obat);
+      // alert(biaya);
+      // alert(idReservasi);
+      // alert(idPengguna);
 
       $.post("WS/konsultasi-insert.php", {
         keterangan: keterangan,
@@ -195,12 +238,11 @@
         idReservasi: idReservasi,
         idPengguna: idPengguna,
         jam: jam,
+
       }).done(function(data) {
-        var result = JSON.parse(data);
-        alert(result);
         if (result.result == "success") {
           alert(result.message);
-          window.location="reservationList.php";
+          window.location = "reservationList.php";
         } else {
           alert(result.message);
         }
@@ -209,9 +251,13 @@
 
     $('body').on('change', '#tanggal_balik', function() {
       var tanggalReservasi = $("#tanggal_balik").val();
+      var dokter = $("#dokter").val();
+      var user = "kinik";
 
       $.post("WS/check-jam.php", {
         tanggalReservasi: tanggalReservasi,
+        dokter: dokter,
+        user: user
 
       }).done(function(data) {
         if (data != "warning") {
@@ -235,6 +281,36 @@
         $("#btnKonfirmasi").attr("disabled", false);
       }
     });
+
+    $('body').on('change', '#dokter', function() {
+		var tanggalReservasi = $("#tanggal_balik").val();
+		var dokter = $('#dokter').val();
+    var user = "klinik";
+
+		$.post("WS/check-doctors.php", {
+			tanggalReservasi: tanggalReservasi,
+			dokter: dokter,
+      user: user
+
+		}).done(function(data) {
+			if (data != "warning") {
+				$("#jam").html(data);
+				$("#btnKonfirmasi").attr("disabled", false);
+				// if ($('#datangLangsung').is(":checked")) {
+				// 	$("#jam").attr("disabled", true);
+				// } else {
+				// 	$("#jam").attr("disabled", false);
+				// }
+				$("#jam").attr("disabled", false);
+			} else {
+				alert("Silahkan memilih tanggal yang sesuai");
+				$("#btnKonfirmasi").attr("disabled", true);
+				$("#jam").attr("disabled", true);
+			}
+
+		});
+	});
+
   </script>
 </body>
 
