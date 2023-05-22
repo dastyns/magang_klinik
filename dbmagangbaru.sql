@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2023 at 05:36 PM
+-- Generation Time: May 22, 2023 at 06:57 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.30
 
@@ -47,8 +47,8 @@ INSERT INTO `dokters` (`id`, `nama`) VALUES
 --
 
 CREATE TABLE `jams` (
-  `idjam` int(11) NOT NULL,
-  `jam` varchar(45) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `jam` varchar(45) NOT NULL,
   `dokter_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -56,7 +56,7 @@ CREATE TABLE `jams` (
 -- Dumping data for table `jams`
 --
 
-INSERT INTO `jams` (`idjam`, `jam`, `dokter_id`) VALUES
+INSERT INTO `jams` (`id`, `jam`, `dokter_id`) VALUES
 (1, '08.00', 2),
 (2, '08.30', 2),
 (3, '09.00', 2),
@@ -75,8 +75,8 @@ INSERT INTO `jams` (`idjam`, `jam`, `dokter_id`) VALUES
 (16, '20.00', 1),
 (17, '20.30', 1),
 (18, '21.00', 1),
-(19, 'lainnya Toton Yuswanto', 1),
-(20, 'lainnya Umi Yuswanto', 2);
+(19, 'lainnya', 1),
+(20, 'lainnya', 2);
 
 -- --------------------------------------------------------
 
@@ -86,14 +86,23 @@ INSERT INTO `jams` (`idjam`, `jam`, `dokter_id`) VALUES
 
 CREATE TABLE `konsultasis` (
   `id` int(11) NOT NULL,
-  `tanggal_konsultasi` datetime DEFAULT NULL,
+  `tanggal_konsultasi` datetime NOT NULL DEFAULT current_timestamp(),
   `keterangan` varchar(45) DEFAULT NULL,
   `obat` varchar(500) DEFAULT NULL,
   `biaya` double DEFAULT NULL,
-  `status` enum('0','1') DEFAULT NULL,
+  `status_konsultasi` enum('0','1') NOT NULL,
   `tanggal_balik` datetime DEFAULT NULL,
   `reservasi_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `konsultasis`
+--
+
+INSERT INTO `konsultasis` (`id`, `tanggal_konsultasi`, `keterangan`, `obat`, `biaya`, `status_konsultasi`, `tanggal_balik`, `reservasi_id`) VALUES
+(1, '0000-00-00 00:00:00', 'penambalan gigi', '', 300000, '1', NULL, 12),
+(2, '0000-00-00 00:00:00', 'penambalan gigi', '', 250000, '1', NULL, 13),
+(3, '2023-05-21 10:50:09', 'perawatan gigi 1', '', 250000, '1', NULL, 14);
 
 -- --------------------------------------------------------
 
@@ -103,11 +112,11 @@ CREATE TABLE `konsultasis` (
 
 CREATE TABLE `penggunas` (
   `id` int(11) NOT NULL,
-  `nama` varchar(45) DEFAULT NULL,
-  `nomor_telepon` varchar(45) DEFAULT NULL,
-  `email` varchar(45) DEFAULT NULL,
-  `password` varchar(45) DEFAULT NULL,
-  `tanggal_registrasi` datetime DEFAULT current_timestamp()
+  `nama` varchar(45) NOT NULL,
+  `nomor_telepon` varchar(45) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `tanggal_registrasi` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -115,7 +124,9 @@ CREATE TABLE `penggunas` (
 --
 
 INSERT INTO `penggunas` (`id`, `nama`, `nomor_telepon`, `email`, `password`, `tanggal_registrasi`) VALUES
-(3, 'klinik', 'klinik', 'klinik', 'klinik', '2023-05-19 21:37:28');
+(3, 'klinik', 'klinik', 'klinik', 'klinik', '2023-05-19 21:37:28'),
+(4, 'Dastyn Susanto', '08967863876', 'dastyn@gmail.com', '12345', '2023-05-20 22:47:00'),
+(5, 'Kenny Reandy Kwando', '0812894483964', 'kenkwando88@gmail.com', '12345', '2023-05-21 10:23:27');
 
 -- --------------------------------------------------------
 
@@ -125,13 +136,22 @@ INSERT INTO `penggunas` (`id`, `nama`, `nomor_telepon`, `email`, `password`, `ta
 
 CREATE TABLE `reservasis` (
   `id` int(11) NOT NULL,
-  `tanggal_reservasi` datetime DEFAULT NULL,
+  `tanggal_reservasi` datetime NOT NULL,
   `keluhan` varchar(45) DEFAULT NULL,
-  `status_reservasi` enum('0','1') DEFAULT NULL,
-  `id_pengguna` int(11) NOT NULL,
+  `status_reservasi` enum('0','1') NOT NULL,
+  `pengguna_id` int(11) NOT NULL,
   `keterangan` varchar(45) DEFAULT NULL,
-  `jam_idjam` int(11) NOT NULL
+  `jam_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `reservasis`
+--
+
+INSERT INTO `reservasis` (`id`, `tanggal_reservasi`, `keluhan`, `status_reservasi`, `pengguna_id`, `keterangan`, `jam_id`) VALUES
+(12, '2023-05-22 00:00:00', 'sakit gigi', '0', 4, NULL, 10),
+(13, '2023-05-21 00:00:00', 'gigi berlubang', '0', 5, NULL, 10),
+(14, '2023-05-21 00:00:00', 'sakit gigi', '0', 4, NULL, 9);
 
 -- --------------------------------------------------------
 
@@ -145,6 +165,14 @@ CREATE TABLE `ulasans` (
   `ulasan` varchar(500) DEFAULT NULL,
   `konsultasi_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `ulasans`
+--
+
+INSERT INTO `ulasans` (`id`, `tanggal_ulasan`, `ulasan`, `konsultasi_id`) VALUES
+(1, NULL, 'pelayanan baik dan memuaskan', 1),
+(2, NULL, 'dokter sangat ramah', 2);
 
 -- --------------------------------------------------------
 
@@ -171,7 +199,7 @@ ALTER TABLE `dokters`
 -- Indexes for table `jams`
 --
 ALTER TABLE `jams`
-  ADD PRIMARY KEY (`idjam`),
+  ADD PRIMARY KEY (`id`),
   ADD KEY `fk_jams_dokters1_idx` (`dokter_id`);
 
 --
@@ -192,8 +220,8 @@ ALTER TABLE `penggunas`
 --
 ALTER TABLE `reservasis`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_reservasi_pengguna1_idx` (`id_pengguna`),
-  ADD KEY `fk_reservasi_jam1_idx` (`jam_idjam`);
+  ADD KEY `fk_reservasi_pengguna1_idx` (`pengguna_id`),
+  ADD KEY `fk_reservasi_jam1_idx` (`jam_id`);
 
 --
 -- Indexes for table `ulasans`
@@ -223,31 +251,31 @@ ALTER TABLE `dokters`
 -- AUTO_INCREMENT for table `jams`
 --
 ALTER TABLE `jams`
-  MODIFY `idjam` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `konsultasis`
 --
 ALTER TABLE `konsultasis`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `penggunas`
 --
 ALTER TABLE `penggunas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `reservasis`
 --
 ALTER TABLE `reservasis`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `ulasans`
 --
 ALTER TABLE `ulasans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `ulasan_baiks`
@@ -275,8 +303,8 @@ ALTER TABLE `konsultasis`
 -- Constraints for table `reservasis`
 --
 ALTER TABLE `reservasis`
-  ADD CONSTRAINT `fk_reservasi_jam1` FOREIGN KEY (`jam_idjam`) REFERENCES `jams` (`idjam`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_reservasi_pengguna1` FOREIGN KEY (`id_pengguna`) REFERENCES `penggunas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_reservasi_jam1` FOREIGN KEY (`jam_id`) REFERENCES `jams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_reservasi_pengguna1` FOREIGN KEY (`pengguna_id`) REFERENCES `penggunas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `ulasans`
