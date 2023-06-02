@@ -176,7 +176,7 @@
                                         echo "<td class='tabel'><a href='detilkonsuldokter.php?idPengguna=" . $row["id"] . "'><button type='button' class='btnDetil'>Detail</button></a></td>";
                                         echo "</tr>";
                                     }
-                                }
+                                }   
 
                                 ?>
 
