@@ -114,95 +114,51 @@ session_start();
             </div>
         </nav>
         <div class="head">
-            <h3 style="color:#283779;">Daftar Reservasi Online</h3>
-            <?php
-                if($_SESSION['email'] == "klinik"){
-                    echo "<div class='containerSearch'>
-                    <table class='tableSearch'>
-                        <tr>
+            <h3 style="color:#283779;">Daftar Jenis Perawatan</h3>
+            <div class='containerSearch'>
+                <table class='tableSearch'>
+                    <tr>
                         <td><input type='text' class='search' placeholder='Search Name' id='keySearch'></td>
                         <td><button class='btnSearchs' id='btnSearch'><i class='fa fa-search icon'></i></button></td>
-                        </tr>
-                    </table>
-                </div>";
-                }
-            ?>
+                    </tr>
+                </table>
+            </div>
         </div>
         <section class="ftco-section">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="table-wrap" id="tabelReservasi">
+                    <div class="text-right"><a href="inputperawatan.php" class="fs-5"><button type='button' class='btnDetil' id='btnTambah'>+ TAMBAH</button></a></div><br>
+                        <div class="table-wrap" id="tabelJeniPerawatan">
                             <table class="table table-responsive-xl">
                                 <tr class="tabel">
                                     <th>
-                                        <h6>Nama Pasien</h6>
+                                        <h6>Nama Perawatan</h6>
                                     </th>
                                     <th>
-                                        <h6>Tanggal Reservasi</h6>
+                                        <h6>Standar Harga</h6>
                                     </th>
                                     <th>
-                                        <h6>Jam Reservasi</h6>
+                                        <h6>Aksi</h6>
                                     </th>
-                                    <th>
-                                        <h6>Keluhan</h6>
-                                    </th>
-                                    <th>&nbsp;</th>
                                 </tr>
 
                                 <?php
 
                                 $conn = new mysqli("localhost", "root", "", "dbmagang");
-                                $pengguna = $_SESSION['email'];
-                                if ($pengguna == "klinik") {
-                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi, J.jam, R.keluhan, R.id
-                                                FROM penggunas as P 
-                                                INNER JOIN reservasis as R on P.id = R.pengguna_id
-                                                INNER JOIN jams as J on J.id = R.jam_id
-                                                WHERE date(R.tanggal_reservasi) >= curdate() and R.status_reservasi='1'
-                                                order by date(R.tanggal_reservasi), J.jam, R.id";
+                                $sql = "SELECT * from jenis_perawatans";
 
                                     $result = $conn->query($sql);
                                     if ($result->num_rows > 0) {
                                         while ($row = $result->fetch_assoc()) {
                                             echo "<tr class='alert tabel' role='alert'>";
                                             echo "<td class='tabel'>" . $row["nama"] . "</td>";
-                                            echo "<td class='tabel'>" . date("d F Y", strtotime($row["tanggalReservasi"])) . "</td>";
-                                            echo "<td class='tabel'>" . $row["jam"] . "</td>";
-                                            echo "<td class='tabel'>" . $row["keluhan"] . "</td>";
-                                            echo "<td class='tabel'><a href='insertkonsul.php?idReservasi=" . $row["id"] . "'>
-                                            <button type='button' class='btnDetil'>Konfirmasi</button></a>
-                                            <button type='button' class='btnDetil' id='btnBatalkan' idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
+                                            echo "<td class='tabel'>" . $row["standar_harga"] . "</td>";
+                                            echo "<td class='tabel'><a href='inputperawatan.php?id=" . $row["id"] . "'>
+                                            <button type='button' class='btnDetil'>Edit</button></a>";
                                             echo "</tr>";
                                         }
                                     }
-                                }
-                                else{
-                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi, J.jam, R.keluhan, R.id
-                                                FROM penggunas as P 
-                                                INNER JOIN reservasis as R on P.id = R.pengguna_id
-                                                INNER JOIN jams as J on J.id = R.jam_id
-                                                WHERE date(R.tanggal_reservasi) >= curdate() and R.status_reservasi='1' and P.email=?
-                                                order by date(R.tanggal_reservasi), J.jam";
-
-                                    $stmt = $conn->prepare($sql);
-                                    $stmt->bind_param("s", $pengguna);
-                                    $stmt->execute();
-                                    $result = $stmt->get_result();
-
-                                    if ($result->num_rows > 0) {
-                                        while ($row = $result->fetch_assoc()) {
-                                            echo "<tr class='alert tabel' role='alert' >";
-                                            echo "<td class='tabel'>" . $row["nama"] . "</td>";
-                                            echo "<td class='tabel'>" . date("d F Y", strtotime($row["tanggalReservasi"])) . "</td>";
-                                            echo "<td class='tabel'>" . $row["jam"] . "</td>";
-                                            echo "<td class='tabel'>" . $row["keluhan"] . "</td>";
-                                            echo "<td class='tabel'><button type='button' class='btnDetil' 
-                                            id='btnBatalkan' idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
-                                            echo "</tr>";
-                                        }
-                                    }
-                                }
                                 ?>
                             </table>
                         </div>
@@ -228,25 +184,25 @@ session_start();
         });
     });
 
-    $('body').on('click', '#btnBatalkan', function(event) {
-        event.preventDefault();
-        var idReservasi = $(this).attr('idReservasiBatal');
-        //alert(idReservasi);
-       
-        
-        $.post("WS/reservasi-batalkan.php", {
-            idReservasi: idReservasi
-        }).done(function(data) {
-            var result = JSON.parse(data);
-            if (result.result == "success") {
-                
-                alert(result.message);
-                window.location = "reservationList.php";
-            } else {
-                alert(result.message);
-            }
-        });
-    });
+    // $('body').on('click', '#btnBatalkan', function(event) {
+    //     event.preventDefault();
+    //     var idReservasi = $(this).attr('idReservasiBatal');
+    //     //alert(idReservasi);
+
+
+    //     $.post("WS/reservasi-batalkan.php", {
+    //         idReservasi: idReservasi
+    //     }).done(function(data) {
+    //         var result = JSON.parse(data);
+    //         if (result.result == "success") {
+
+    //             alert(result.message);
+    //             window.location = "reservationList.php";
+    //         } else {
+    //             alert(result.message);
+    //         }
+    //     });
+    // });
 </script>
 
 </html>
