@@ -22,22 +22,26 @@ if ($tanggalRes < $curdate) {
 	if ($conn->connect_error) {
 		$arr = ["result" => "error", "message" => "Error Connect DB"];
 	} else {
-		$id1 = 19;
-		$id2 = 20;
+		$id1 = 127;
+		$id2 = 128;
+		$arrHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+		$namaHari = $arrHari[date("w", $curdate)];
+		$namaHariSemua = "Semua";
+		$status = "aktif";
 		if ($user == "klinik") {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id 
 					from reservasis
-					where tanggal_reservasi = ?) and dokter_id = ?";
+					where tanggal_reservasi = ?)  and dokter_id = ? and hari in (?,?) and status=?";
 			$stmt = $conn->prepare($sql);
-			$stmt->bind_param("si", $tanggalReservasi, $dokter);
+			$stmt->bind_param("sisss", $tanggalReservasi, $dokter, $namaHari, $namaHariSemua, $status);
 		} else {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id
 					from reservasis
-					where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id = ?";
+					where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id = ? and hari=? and status=?";
 			$stmt = $conn->prepare($sql);
-			$stmt->bind_param("siii",$tanggalReservasi, $id1, $id2, $dokter);
+			$stmt->bind_param("siiiss", $tanggalReservasi, $id1, $id2, $dokter, $namaHari, $status);
 		}
 		$stmt->execute();
 		$result = $stmt->get_result();
@@ -46,9 +50,10 @@ if ($tanggalRes < $curdate) {
 			$curhour = date("H.i");
 			if ($curdate == $tanggalRes) {
 				while ($row = $result->fetch_assoc()) {
-					if (strtotime($row["jam"]) >= strtotime($curhour) || $row['jam'] == "lainnya") {
-						echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
-					}
+					// if (strtotime($row["jam"]) >= strtotime($curhour) || $row['jam'] == "lainnya") {
+						
+					// }
+					echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
 				}
 			} else {
 				while ($row = $result->fetch_assoc()) {

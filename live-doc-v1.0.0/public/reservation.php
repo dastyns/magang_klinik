@@ -84,25 +84,30 @@ date_default_timezone_set("Asia/Jakarta");
 									<span class="form-label">Jam Datang</span>
 									<select class="form-control" id="jam">
 										<?php
+										
 										$conn = new mysqli("localhost", "root", "", "dbmagang");
+										$arrHari = ["Minggu","Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 										$tanggalHariIni = date('Y-m-d');
-										$id1 = 19;
-										$id2 = 20;
+										$namaHari = $arrHari[date("w", strtotime($tanggalHariIni))];
+										$namaHariSemua = "Semua";
+										$id1 = 127;
+										$id2 = 128;
 										$iddokter = 1;
+										$status="aktif";
 										if ($_SESSION['email'] == "klinik") {
 											$sql = "SELECT * from jams
 													where id not in (select jam_id 
 													from reservasis
-													where tanggal_reservasi = ?) and dokter_id = ?";
+													where tanggal_reservasi = ?) and dokter_id = ? and hari in (?,?) and status=?";
 											$stmt = $conn->prepare($sql);
-											$stmt->bind_param("si", $tanggalHariIni, $iddokter);
+											$stmt->bind_param("sisss", $tanggalHariIni, $iddokter, $namaHari, $namaHariSemua ,$status);
 										} else {
 											$sql = "SELECT * from jams
 											where id not in (select jam_id
 											from reservasis
-											where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id= ?";
+											where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id= ? and hari=? and status=?";
 											$stmt = $conn->prepare($sql);
-											$stmt->bind_param("siii", $tanggalHariIni, $id1, $id2, $iddokter);
+											$stmt->bind_param("siiiss", $tanggalHariIni, $id1, $id2, $iddokter, $namaHari, $status);
 										}
 										
 										$stmt->execute();
@@ -112,9 +117,10 @@ date_default_timezone_set("Asia/Jakarta");
 
 											$curhour = date("H.i");
 											while ($row = $result->fetch_assoc()) {
-												if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
-													echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
-												}
+												echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
+												// if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
+													
+												// }
 											}
 										}
 
@@ -237,9 +243,12 @@ date_default_timezone_set("Asia/Jakarta");
 	});
 
 	$('body').on('change', '#tanggal', function() {
+		var arrayDay = ["Minggu","Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 		var tanggalReservasi = $("#tanggal").val();
 		var user = $("#user").val();
 		var dokter = $('#dokter').val();
+		var day = new Date(tanggalReservasi);
+		alert(arrayDay[day.getDay()]);
 
 		$.post("WS/check-jam.php", {
 			tanggalReservasi: tanggalReservasi,
