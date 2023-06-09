@@ -78,6 +78,7 @@
 
                   </div>
                 </div>
+                <br><br>
                 <div class="col-md-6">
                   <div class="form-group first">
                     <label class="txtLabel">Tanggal Konsultasi</label>
@@ -85,19 +86,79 @@
                     $tanggal = date("d F Y");
                     echo "<input type='text' class='form-control' id='tanggal' value='" . $tanggal . "' disabled>";
                     ?>
-
                   </div>
                 </div>
               </div>
-              <!-- <div class="row">
-                
-              </div> -->
+              <br>
+              <div class="row" id="jenisPerawatan">
+                <div class="col-md-4">
+                  <div class="form-group first">
+                    <label class="txtLabel">Jenis Perawatan</label>
+                    <div class="input-group">
+                      <select class="custom-select" id="inputJenis">
+                        <option value=''>-- Pilih Jenis Perawatan --</option>
+                        <?php
+                        $sql = "SELECT * FROM jenis_perawatans";
+
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {
+                          while ($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row['id'] . "' harga='" . $row['standar_harga'] . "' nama='".$row['nama']."'>" . $row['nama'] . $row['standar_harga'] . "</option>";
+                          }
+                        }
+                        ?>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group first">
+                    <label class="txtLabel">Posisi</label>
+                    <input type='text' class='form-control' id='posisi' value=''>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group first">
+                    <label class="txtLabel">Harga</label>
+                    <?php
+                    echo "<input type='text' class='form-control' id='harga' value=''>";
+                    ?>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group first">
+                    <label class="txtLabel">Aksi</label>
+                    <button class="btn btn-outline-secondary" type="button" id="btnTambah">Tambah</button>
+                  </div>
+                </div>
+              </div>
+
+
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Jenis Perawatan</th>
+                    <th scope="col">Posisi Gigi</th>
+                    <th scope="col">Harga</th>
+                    <th scope="col">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="daftar">
+
+                </tbody>
+              </table>
+
+
+
+
+              <br>
               <div>
                 <div class="form-group last mb-3">
                   <label class="txtLabel">Keterangan</label>
                   <textarea class="form-control" style="height: 100px;" placeholder="keterangan" id="keterangan"></textarea>
                 </div>
               </div>
+              <br>
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group first">
@@ -122,11 +183,7 @@
                       <label class="txtLabel">Dokter</label>
                       <select class="form-control" required id="dokter">
                         <?php
-                        $conn = new mysqli("localhost", "root", "", "dbmagang");
-
                         $sql = "SELECT * from dokters";
-
-
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
                         $result = $stmt->get_result();
@@ -155,7 +212,6 @@
                       <label class="txtLabel">Jam Datang</label>
                       <select class="form-control" id="jam">
                         <?php
-                        $conn = new mysqli("localhost", "root", "", "dbmagang");
                         $tanggalHariIni = date('Y-m-d');
                         $dokter = 1;
                         $sql = "SELECT * from jams
@@ -284,34 +340,63 @@
     });
 
     $('body').on('change', '#dokter', function() {
-		var tanggalReservasi = $("#tanggal_balik").val();
-		var dokter = $('#dokter').val();
-    var user = "klinik";
+      var tanggalReservasi = $("#tanggal_balik").val();
+      var dokter = $('#dokter').val();
+      var user = "klinik";
 
-		$.post("WS/check-doctors.php", {
-			tanggalReservasi: tanggalReservasi,
-			dokter: dokter,
-      user: user
+      $.post("WS/check-doctors.php", {
+        tanggalReservasi: tanggalReservasi,
+        dokter: dokter,
+        user: user
 
-		}).done(function(data) {
-			if (data != "warning") {
-				$("#jam").html(data);
-				$("#btnKonfirmasi").attr("disabled", false);
-				// if ($('#datangLangsung').is(":checked")) {
-				// 	$("#jam").attr("disabled", true);
-				// } else {
-				// 	$("#jam").attr("disabled", false);
-				// }
-				$("#jam").attr("disabled", false);
-			} else {
-				alert("Silahkan memilih tanggal yang sesuai");
-				$("#btnKonfirmasi").attr("disabled", true);
-				$("#jam").attr("disabled", true);
-			}
+      }).done(function(data) {
+        if (data != "warning") {
+          $("#jam").html(data);
+          $("#btnKonfirmasi").attr("disabled", false);
+          // if ($('#datangLangsung').is(":checked")) {
+          // 	$("#jam").attr("disabled", true);
+          // } else {
+          // 	$("#jam").attr("disabled", false);
+          // }
+          $("#jam").attr("disabled", false);
+        } else {
+          alert("Silahkan memilih tanggal yang sesuai");
+          $("#btnKonfirmasi").attr("disabled", true);
+          $("#jam").attr("disabled", true);
+        }
 
+      });
+    });
+
+    $('body').on('change', '#inputJenis', function() {
+      var pilihan = $('#inputJenis option:selected').attr('harga');
+      $('#harga').val(pilihan);
+    });
+
+    $('body').on('click', '#btnTambah', function() {
+      var harga = $('#harga').val();
+      var posisi = $('#posisi').val();
+      var jenis = $('#inputJenis option:selected').attr('nama');
+      var baris = "<tr id='jenisPerawatan' harga='" + harga + "' posisi='" + posisi + "' jenis='" + jenis + "'>";
+      baris += "<td>";
+      baris += jenis;
+      baris += "</td>";
+      baris += "<td>";
+      baris += posisi;
+      baris += "</td>";
+      baris += "<td>";
+      baris += harga;
+      baris += "</td>";
+      baris += "<td>";
+      baris += "<button class='btn btn-outline-secondary btnHapus' type='button'>Hapus</button>";
+      baris += "</td>";
+      baris += "</tr>";
+      $('#daftar').append(baris);
+    });
+
+    $('body').on('click', '.btnHapus', function(){   //untuk hapus <tr> nya
+			$(this).parent().parent().remove();
 		});
-	});
-
   </script>
 </body>
 
