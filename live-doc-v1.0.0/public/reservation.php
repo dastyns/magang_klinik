@@ -46,7 +46,7 @@ date_default_timezone_set("Asia/Jakarta");
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
-									<span class="form-label">Dokter</span>
+									<span class="txtLabel">Dokter</span>
 									<select class="form-control" required id="dokter">
 									<?php
 										$conn = new mysqli("localhost", "root", "", "dbmagang");
@@ -75,13 +75,13 @@ date_default_timezone_set("Asia/Jakarta");
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<span class="form-label">Tanggal Reservasi</span>
+									<span class="txtLabel">Tanggal Reservasi</span>
 									<input class="form-control" type="date" required id="tanggal" value=<?php echo "'" . date('Y-m-d') . "'"; ?>>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<span class="form-label">Jam Datang</span>
+									<span class="txtLabel">Jam Datang</span>
 									<select class="form-control" id="jam">
 										<?php
 										
@@ -136,13 +136,13 @@ date_default_timezone_set("Asia/Jakarta");
 							<div class='row'>
 								<div class='col-md-6' id='divInputNomorTelepon'>
 									<div class='form-group'>
-										<span class='form-label'>Nomor Telepon</span>
+										<span class='txtLabel'>Nomor Telepon</span>
 										<input class='form-control' id='nomorTelepon'>
 									</div>
 								</div>
 								<div class='col-md-6' id='divInputNama'>
 									<div class='form-group'>
-									<span class='form-label'>Nama Lengkap</span>
+									<span class='txtLabel'>Nama Lengkap</span>
 										<input class='form-control' id='nama'>
 									</div>
 								</div>
@@ -152,7 +152,7 @@ date_default_timezone_set("Asia/Jakarta");
 						<div class="row">
 							<div class="col-md-10">
 								<div class="form-group">
-									<span class="form-label">Keluhan</span>
+									<label class="txtLabel">Keluhan</span>
 									<textarea class="form-keluhan" cols="50" id="keluhan"></textarea>
 								</div>
 							</div>

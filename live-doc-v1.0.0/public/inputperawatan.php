@@ -35,6 +35,10 @@
             align-items: center;
             flex-direction: column;
         }
+        .txtLabel{
+            color: #283779;
+            font-family: 'Courier New', Courier, monospace;
+        }
     </style>
 </head>
 
@@ -48,7 +52,7 @@
         </nav>
         <br>
         <div class="head">
-            <h3 style="color:#283779;">Tambah/Edit Jenis Perawatan</h3>
+            <h3 style="color:#283779;"><strong>Tambah/Edit Jenis Perawatan</strong></h3>
         </div>
         <br><br><br>
         <div class="container">
@@ -58,17 +62,17 @@
                 <!--/.bg-holder-->
 
                 <div class="col-lg-6 z-index-2 mb-5"><img class="w-100" src="assets/img/gallery/appointment.png" alt="..." /></div>
-                <div class="col-lg-6 z-index-2">
+                <div class="col-lg-6 z-index-2 p-5">
                     <form class="row g-3">
                         <br><br>
-                        <div class="col-md-12">
-                            <span class="form-label">Nama Jenis Perawatan</span>
+                        <div class="col-md-12 txtLabel">
+                            <label>Nama Jenis Perawatan</label>
                             <label class="visually-hidden" for="inputName">Nama Perawatan</label>
                             <input class="form-control form-livedoc-control" id="inputName" type="text" placeholder="Name" />
                         </div>
-                        <div class="col-md-12">
-                            <span class="form-label">Standar harga Perawatan</span>
-                            <label class="visually-hidden" for="inputPhone">Standar harga</label>
+                        <div class="col-md-12 txtLabel">
+                            <label>Standar harga Perawatan</label>
+                            <label class="visually-hidden" for="inputHarga">Standar harga</label>
                             <input class="form-control form-livedoc-control" id="inputPhone" type="text" placeholder="Standar Harga" />
                         </div>
                         <!-- <div class="col-md-6">

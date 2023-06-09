@@ -12067,3 +12067,7 @@ h6 {
 .tabel {
   text-align: center;
 }
+.txtLabel{
+  color: #283779;
+  font-family: 'Courier New', Courier, monospace;
+}

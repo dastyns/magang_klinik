@@ -71,7 +71,7 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group first">
-                    <label for="fname">Full Name</label>
+                    <label class="txtLabel">Full Name</label>
                     <?php
                     echo "<input type='text' class='form-control' id='nama' value='" . $nama . "' disabled>"
                     ?>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group first">
-                    <label>Tanggal Konsultasi</label>
+                    <label class="txtLabel">Tanggal Konsultasi</label>
                     <?php
                     $tanggal = date("d F Y");
                     echo "<input type='text' class='form-control' id='tanggal' value='" . $tanggal . "' disabled>";
@@ -94,32 +94,32 @@
               </div> -->
               <div>
                 <div class="form-group last mb-3">
-                  <label>Keterangan</label>
+                  <label class="txtLabel">Keterangan</label>
                   <textarea class="form-control" style="height: 100px;" placeholder="keterangan" id="keterangan"></textarea>
                 </div>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group first">
-                    <label>Obat</label>
+                    <label class="txtLabel">Obat</label>
                     <input type="text" class="form-control" id="obat">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group first">
-                    <label>Biaya</label>
+                    <label class="txtLabel">Biaya</label>
                     <input type="text" class="form-control" id="biaya">
                   </div>
                 </div>
               </div>
-              <input type="checkbox" id="checkTanggalBalik"> Tanggal Balik
+              <input type="checkbox" id="checkTanggalBalik" class="txtLabel"> Tanggal Balik
               <br><br>
 
               <div id="divTanggalBalik" hidden>
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group first">
-                      <label>Dokter</label>
+                      <label class="txtLabel">Dokter</label>
                       <select class="form-control" required id="dokter">
                         <?php
                         $conn = new mysqli("localhost", "root", "", "dbmagang");
@@ -147,12 +147,12 @@
                 </div>
                 <div class="row">
                   <div class="col-md-6">
-                    <label id="test">Tanggal Balik</label>
+                    <label id="test" class="txtLabel">Tanggal Balik</label>
                     <input type="date" value=<?php echo "'" . date('Y-m-d') . "'"; ?> class="form-control" id="tanggal_balik">
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
-                      <label>Jam Datang</label>
+                      <label class="txtLabel">Jam Datang</label>
                       <select class="form-control" id="jam">
                         <?php
                         $conn = new mysqli("localhost", "root", "", "dbmagang");
