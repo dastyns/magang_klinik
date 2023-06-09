@@ -134,7 +134,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&amp;display=swap" rel="stylesheet">
 </body>
 <script>
-    $('body').on('click', '#btnSimpan', function() {
+    $('body').on('click', '#btnSimpan', function(event) {
+        event.preventDefault();
         var nama = $("#inputNama").val();
         var harga = $('#inputHarga').val();
         var id = $('#idJenisPerawatan').val();
