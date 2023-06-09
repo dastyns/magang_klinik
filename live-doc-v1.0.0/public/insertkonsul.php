@@ -240,6 +240,7 @@
         jam: jam,
 
       }).done(function(data) {
+        var result = JSON.parse(data);
         if (result.result == "success") {
           alert(result.message);
           window.location = "reservationList.php";

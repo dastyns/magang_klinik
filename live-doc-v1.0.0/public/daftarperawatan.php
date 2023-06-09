@@ -154,7 +154,7 @@ session_start();
                                             echo "<tr class='alert tabel' role='alert'>";
                                             echo "<td class='tabel'>" . $row["nama"] . "</td>";
                                             echo "<td class='tabel'>" . $row["standar_harga"] . "</td>";
-                                            echo "<td class='tabel'><a href='inputperawatan.php?id=" . $row["id"] . "'>
+                                            echo "<td class='tabel'><a href='editperawatan.php?id=" . $row["id"] . "'>
                                             <button type='button' class='btnDetil'>Edit</button></a>";
                                             echo "</tr>";
                                         }

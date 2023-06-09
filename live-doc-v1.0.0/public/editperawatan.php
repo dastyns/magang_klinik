@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Perawatan</title>
+    <title>Edit Perawatan</title>
     <!-- ===============================================-->
     <!--    Favicons-->
     <!-- ===============================================-->
@@ -53,7 +53,7 @@
         </nav>
         <br>
         <div class="head">
-            <h3 style="color:#283779;"><strong>Tambah Jenis Perawatan</strong></h3>
+            <h3 style="color:#283779;"><strong>Edit Jenis Perawatan</strong></h3>
         </div>
         <br><br><br>
         <div class="container">
@@ -61,22 +61,55 @@
                 <div class="bg-holder bg-size" style="background-image:url(assets/img/gallery/dot-bg.png);background-position:bottom right;background-size:auto;">
                 </div>
                 <!--/.bg-holder-->
+                <?php
+                    $conn = new mysqli("localhost", "root", "", "dbmagang");
+                    $id = $_GET['id'];
+                    $sql = "SELECT nama, standar_harga 
+                                FROM jenis_perawatans
+                                WHERE id=?";
 
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("i", $id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if ($result->num_rows ==1) {
+                        $row = $result->fetch_assoc();
+                    }
+                    $nama = $row["nama"];
+                    $harga = $row["standar_harga"];
+                ?>
                 <div class="col-lg-6 z-index-2 mb-5"><img class="w-100" src="assets/img/gallery/appointment.png" alt="..." /></div>
                 <div class="col-lg-6 z-index-2 p-5">
-                        <form method="post" action="#" class="row g-3">
+                    <form method="post" action="#" class="row g-3">
                         <br><br>
                         <div class="col-md-12 txtLabel">
                             <label>Nama Jenis Perawatan</label>
                             <label class="visually-hidden" for="inputName">Nama Perawatan</label>
-                            <input class="form-control form-livedoc-control" id="inputNama" type="text" placeholder="contoh: Cabut Gigi" />
+                            <input class="form-control form-livedoc-control" id="inputNama" type="text" value="<?php echo $nama ?>"/>
                         </div>
                         <div class="col-md-12 txtLabel">
                             <label>Standar harga Perawatan</label>
                             <label class="visually-hidden" for="inputHarga">Standar harga</label>
-                            <input class="form-control form-livedoc-control" id="inputHarga" type="text" placeholder="contoh: 200000" />
-                            
+                            <input class="form-control form-livedoc-control" id="inputHarga" type="text" value="<?php echo $harga ?>"/>
                         </div>
+                        <input class="form-control form-livedoc-control" id="idJenisPerawatan" type="hidden" value="<?php echo $_GET['id'] ?>"/>
+                        <!-- <div class="col-md-6">
+                            <label class="form-label visually-hidden" for="inputCategory">Category</label>
+                            <select class="form-select" id="inputCategory">
+                                <option selected="selected">Category</option>
+                                <option> Category One</option>
+                                <option> Category Two</option>
+                                <option> Category Three</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label visually-hidden" for="inputEmail">Email</label>
+                            <input class="form-control form-livedoc-control" id="inputEmail" type="email" placeholder="Email" />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label visually-hidden" for="validationTextarea">Message</label>
+                            <textarea class="form-control form-livedoc-control" id="validationTextarea" placeholder="Message" style="height: 250px;" required="required"></textarea>
+                        </div> -->
                         <div class="col-12">
                             <div class="d-grid">
                                 <button class="btn btn-primary rounded-pill" type="submit" id="btnSimpan">Simpan</button>
@@ -104,11 +137,12 @@
     $('body').on('click', '#btnSimpan', function() {
         var nama = $("#inputNama").val();
         var harga = $('#inputHarga').val();
-        
+        var id = $('#idJenisPerawatan').val();
 
-        $.post("WS/perawatan-insert.php", {
+        $.post("WS/perawatan-edit.php", {
             nama: nama,
             harga: harga,
+            id:id,
 
         }).done(function(data) {
             var result = JSON.parse(data);
