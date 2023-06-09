@@ -147,7 +147,7 @@ session_start();
                                     <th>
                                         <h6>Keluhan</h6>
                                     </th>
-                                    <th>&nbsp;</th>
+                                    <th>Aksi</th>
                                 </tr>
 
                                 <?php
@@ -155,11 +155,11 @@ session_start();
                                 $conn = new mysqli("localhost", "root", "", "dbmagang");
                                 $pengguna = $_SESSION['email'];
                                 if ($pengguna == "klinik") {
-                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi, J.jam, R.keluhan, R.id
+                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi,J.hari, J.jam, R.keluhan, R.id
                                                 FROM penggunas as P 
                                                 INNER JOIN reservasis as R on P.id = R.pengguna_id
                                                 INNER JOIN jams as J on J.id = R.jam_id
-                                                WHERE date(R.tanggal_reservasi) >= curdate() and R.status_reservasi='1'
+                                                WHERE date(R.tanggal_reservasi) >= curdate()
                                                 order by date(R.tanggal_reservasi), J.jam, R.id";
 
                                     $result = $conn->query($sql);
@@ -167,7 +167,7 @@ session_start();
                                         while ($row = $result->fetch_assoc()) {
                                             echo "<tr class='alert tabel' role='alert'>";
                                             echo "<td class='tabel'>" . $row["nama"] . "</td>";
-                                            echo "<td class='tabel'>" . date("d F Y", strtotime($row["tanggalReservasi"])) . "</td>";
+                                            echo "<td class='tabel'>" . $row['hari'] . ", " . date("d F Y", strtotime($row["tanggalReservasi"])) . "</td>";
                                             echo "<td class='tabel'>" . $row["jam"] . "</td>";
                                             echo "<td class='tabel'>" . $row["keluhan"] . "</td>";
                                             echo "<td class='tabel'><a href='insertkonsul.php?idReservasi=" . $row["id"] . "'>
