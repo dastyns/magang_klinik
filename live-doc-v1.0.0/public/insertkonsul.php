@@ -139,7 +139,7 @@
                     <th scope="col">Jenis Perawatan</th>
                     <th scope="col">Posisi Gigi</th>
                     <th scope="col">Harga</th>
-                    <th scope="col mb-3">Aksi</th>
+                    <th scope="col">Aksi</th>
                   </tr>
                 </thead>
                 <tbody id="daftar">

@@ -192,7 +192,7 @@ date_default_timezone_set("Asia/Jakarta");
 					var result = JSON.parse(data);
 					if (result.result == "success") {
 						alert(result.message);
-						window.location = "index.php";
+							
 					} else {
 						alert(result.message);
 					}
