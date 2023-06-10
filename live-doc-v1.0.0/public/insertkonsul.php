@@ -37,7 +37,7 @@
         <div class="" style="margin-top: 50px;">
           <div class="col-md-7 py-6">
             <h3>Konsultasi</h3>
-            <!-- <p class="mb-4">Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur adipisicing.</p> -->
+            
             <?php
             date_default_timezone_set("Asia/Jakarta");
             $conn = new mysqli("localhost", "root", "", "dbmagang");
@@ -96,14 +96,14 @@
                     <label class="txtLabel">Jenis Perawatan</label>
                     <div class="input-group">
                       <select class="custom-select" id="inputJenis">
-                        <option value=''>-- Pilih Jenis Perawatan --</option>
+                        <option value=''>Pilih Jenis Perawatan</option>
                         <?php
                         $sql = "SELECT * FROM jenis_perawatans";
 
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                           while ($row = $result->fetch_assoc()) {
-                            echo "<option value='" . $row['id'] . "' harga='" . $row['standar_harga'] . "' nama='".$row['nama']."'>" . $row['nama'] . $row['standar_harga'] . "</option>";
+                            echo "<option value='" . $row['id'] . "' harga='" . $row['standar_harga'] . "' nama='".$row['nama']."'>" . $row['nama'] . "</option>";
                           }
                         }
                         ?>
@@ -119,7 +119,7 @@
                 </div>
                 <div class="col-md-3">
                   <div class="form-group first">
-                    <label class="txtLabel">Harga</label>
+                    <label class="txtLabel">Harga (Rp)</label>
                     <?php
                     echo "<input type='text' class='form-control' id='harga' value=''>";
                     ?>
@@ -133,23 +133,19 @@
                 </div>
               </div>
 
-
               <table class="table table-bordered">
                 <thead>
                   <tr>
                     <th scope="col">Jenis Perawatan</th>
                     <th scope="col">Posisi Gigi</th>
                     <th scope="col">Harga</th>
-                    <th scope="col">Aksi</th>
+                    <th scope="col mb-3">Aksi</th>
                   </tr>
                 </thead>
                 <tbody id="daftar">
 
                 </tbody>
               </table>
-
-
-
 
               <br>
               <div>
@@ -168,8 +164,8 @@
                 </div>
                 <div class="col-md-6">
                   <div class="form-group first">
-                    <label class="txtLabel">Biaya</label>
-                    <input type="text" class="form-control" id="biaya">
+                    <label class="txtLabel">Total Harga (Rp)</label>
+                    <input type="text" class="form-control" id="totalHarga">
                   </div>
                 </div>
               </div>
@@ -242,15 +238,6 @@
               </div>
 
               <br>
-
-              <!-- <div class="d-flex mb-5 mt-4 align-items-center">
-                <div class="d-flex align-items-center">
-                <label class="control control--checkbox mb-0"><span class="caption">Creating an account means you're okay with our <a href="#">Terms and Conditions</a> and our <a href="#">Privacy Policy</a>.</span>
-                  <input type="checkbox" checked="checked"/>
-                  <div class="control__indicator"></div>
-                </label>
-              </div>
-              </div> -->
               <input type="hidden" value=<?php echo "'" . $idReservasi . "'" ?> id="idReservasi">
               <input type="submit" value="Konfirmasi" id="btnKonfirmasi" class="btn px-5 btn-primary">
 
@@ -279,12 +266,6 @@
         tanggalbalik = $("#tanggal_balik").val();
         jam = $("#jam").val();
       }
-      // alert(tanggalbalik);
-      // alert(keterangan);
-      // alert(obat);
-      // alert(biaya);
-      // alert(idReservasi);
-      // alert(idPengguna);
 
       $.post("WS/konsultasi-insert.php", {
         keterangan: keterangan,
@@ -353,11 +334,6 @@
         if (data != "warning") {
           $("#jam").html(data);
           $("#btnKonfirmasi").attr("disabled", false);
-          // if ($('#datangLangsung').is(":checked")) {
-          // 	$("#jam").attr("disabled", true);
-          // } else {
-          // 	$("#jam").attr("disabled", false);
-          // }
           $("#jam").attr("disabled", false);
         } else {
           alert("Silahkan memilih tanggal yang sesuai");
@@ -388,14 +364,22 @@
       baris += harga;
       baris += "</td>";
       baris += "<td>";
-      baris += "<button class='btn btn-outline-secondary btnHapus' type='button'>Hapus</button>";
+      baris += "<button class='btn btn-outline-secondary btnHapus' type='text' value='"+ harga +"'>Hapus</button>";
       baris += "</td>";
       baris += "</tr>";
       $('#daftar').append(baris);
+
+      var totalHargaSebelum = Number($('#totalHarga').val());
+      var totalHarga = totalHargaSebelum + Number(harga);
+      $('#totalHarga').val(totalHarga);
     });
 
     $('body').on('click', '.btnHapus', function(){   //untuk hapus <tr> nya
 			$(this).parent().parent().remove();
+      var hargaHapus = Number($(this).val());
+      var totalHargaSebelum = Number($('#totalHarga').val());
+      var totalHarga = totalHargaSebelum - hargaHapus;
+      $('#totalHarga').val(totalHarga);
 		});
   </script>
 </body>
