@@ -110,7 +110,7 @@ CREATE TABLE `jenis_perawatans` (
   `nama` varchar(45) NOT NULL,
   `standar_harga` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,6 +119,7 @@ CREATE TABLE `jenis_perawatans` (
 
 LOCK TABLES `jenis_perawatans` WRITE;
 /*!40000 ALTER TABLE `jenis_perawatans` DISABLE KEYS */;
+INSERT INTO `jenis_perawatans` VALUES (1,'Cabut Gigi 124487',200000),(2,'Cabut Gigi 2',200000),(3,'Cabut Gigi 123',140000),(4,'Cabut Gigi 12445',120000);
 /*!40000 ALTER TABLE `jenis_perawatans` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,7 +134,6 @@ CREATE TABLE `konsultasis` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `keterangan` varchar(45) DEFAULT NULL,
   `obat` varchar(500) DEFAULT NULL,
-  `biaya` double DEFAULT NULL,
   `tanggal_balik` datetime DEFAULT NULL,
   `total_harga` int(11) NOT NULL,
   `reservasi_id` int(11) NOT NULL,
@@ -176,7 +176,7 @@ CREATE TABLE `penggunas` (
 
 LOCK TABLES `penggunas` WRITE;
 /*!40000 ALTER TABLE `penggunas` DISABLE KEYS */;
-INSERT INTO `penggunas` VALUES (1,'klinik','','klinik','klinik','2023-06-02 19:18:33'),(2,'Kenny','082188888888','kenkwando08@gmail.com','12345','2023-06-03 00:00:55');
+INSERT INTO `penggunas` VALUES (1,'klinik','','klinik','klinik','2023-06-02 19:18:33'),(2,'Kenny','082188888888','kenkwando08@gmail.com','123456','2023-06-03 00:00:55');
 /*!40000 ALTER TABLE `penggunas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -193,7 +193,6 @@ CREATE TABLE `reservasis` (
   `keluhan` varchar(500) DEFAULT NULL,
   `status_reservasi` enum('baru','dibatalkan klinik','dibatalkan pasien','selesai') NOT NULL,
   `pengguna_id` int(11) NOT NULL,
-  `keterangan` varchar(45) DEFAULT NULL,
   `jam_id` int(11) NOT NULL,
   `tanggal_pesan` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
@@ -201,7 +200,7 @@ CREATE TABLE `reservasis` (
   KEY `fk_reservasi_jam1_idx` (`jam_id`),
   CONSTRAINT `fk_reservasi_jam1` FOREIGN KEY (`jam_id`) REFERENCES `jams` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_reservasi_pengguna1` FOREIGN KEY (`pengguna_id`) REFERENCES `penggunas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,6 +209,7 @@ CREATE TABLE `reservasis` (
 
 LOCK TABLES `reservasis` WRITE;
 /*!40000 ALTER TABLE `reservasis` DISABLE KEYS */;
+INSERT INTO `reservasis` VALUES (1,'2023-06-12 00:00:00','sakit gigi','baru',2,1,'2023-06-09 17:47:11');
 /*!40000 ALTER TABLE `reservasis` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,4 +250,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-03  0:28:41
+-- Dump completed on 2023-06-10 18:32:19
