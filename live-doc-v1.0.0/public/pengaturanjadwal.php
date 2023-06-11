@@ -100,7 +100,7 @@
             flex-direction: column;
         }
 
-        .checkboxjadwal{
+        .checkboxjadwal {
             width: 20px;
             height: 20px;
         }
@@ -120,8 +120,10 @@
             <h3 style="color:#283779;">Pengaturan Jadwal Reservasi</h3>
         </div>
         <?php
+        session_start();
         $conn = new mysqli("localhost", "root", "", "dbmagang");
-        $id=1;
+        $id = $_SESSION["idPengguna"];
+
         $sql = "SELECT distinct(jam) FROM jams where dokter_id=? and hari!='semua'";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $id);
@@ -167,51 +169,56 @@
         <section class="ftco-section">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-wrap" id="tabelReservasi">
-                            <table class="table table-responsive-xl">
-                                <tr class="tabel">
-                                    <th>Jam</th>
-                                    <?php
-                                    foreach($dataHari as $dh){
-                                        echo "<th>".$dh['hari']."</th>";
-                                    }
-                                    ?>
-                                </tr>
-                                <tr>
-                                <?php
-                                    foreach($dataJam as $dj){
-                                        echo "<tr>";
-                                        echo "<td class='tabel'>" . $dj['jam'] . "</td>";
-                                        foreach($dataHari as $dh) {
-                                            echo "<td class='tabel'>";
-                                            foreach($dataHariStatus as $djs){
-                                                if($djs['hari'] == $dh['hari'] && $djs['jam'] == $dj['jam']){
-                                                    if ($djs['status'] == "aktif") {
-                                                        echo "<div class='form__group'>";
-					                                    echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='aktif' class='checkboxjadwal' checked>";
-					                                    echo "</div>";
-				                                        
-                                                    }else{
-                                                        echo "<div class='form__group'>";
-					                                    echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='nonaktif' class='checkboxjadwal'>";
-					                                    echo "</div>";
+                    <form>
+                        <div class="col-md-12">
+                            <div class="text-right"><button type='button' class='btnDetil' id='btnSimpan'>SIMPAN</button>
+                                <div><br>
+                                <input type="hidden" name="idDokter" id="idDokter" value="<?php echo $_SESSION["idPengguna"] ?>">
+                                    <div class="table-wrap" id="tabelReservasi">
+                                        <table class="table table-responsive-xl">
+                                            <tr class="tabel">
+                                                <th>Jam</th>
+                                                <?php
+                                                foreach ($dataHari as $dh) {
+                                                    echo "<th>" . $dh['hari'] . "</th>";
+                                                }
+                                                ?>
+                                            </tr>
+                                            <tr>
+                                                <?php
+                                                foreach ($dataJam as $dj) {
+                                                    echo "<tr>";
+                                                    echo "<td class='tabel'>" . $dj['jam'] . "</td>";
+                                                    foreach ($dataHari as $dh) {
+                                                        echo "<td class='tabel'>";
+                                                        foreach ($dataHariStatus as $djs) {
+                                                            if ($djs['hari'] == $dh['hari'] && $djs['jam'] == $dj['jam']) {
+                                                                if ($djs['status'] == "aktif") {
+                                                                    echo "<div class='form__group'>";
+                                                                    // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='aktif' class='checkboxjadwal' checked>";
+                                                                    echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='aktif' class='checkboxjadwal' checked>";
+                                                                    echo "</div>";
+                                                                } else {
+                                                                    echo "<div class='form__group'>";
+                                                                    // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='nonaktif' class='checkboxjadwal'>";
+                                                                    echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='nonaktif' class='checkboxjadwal'>";
+                                                                    echo "</div>";
+                                                                }
+                                                            }
+                                                        }
+                                                        echo "</td>";
                                                     }
-                                                    
-                                                } 
-                                            }
-                                            echo "</td>";
-                                        }     
-                                        
-                                        echo "</tr>";
-                                    }
-                                ?>
-                                </tr>
-                            </table>
+
+                                                    echo "</tr>";
+                                                }
+                                                ?>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </form>
         </section>
     </main>
 
@@ -219,23 +226,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&amp;display=swap" rel="stylesheet">
     <script>
-        $('body').on('click', '#btnSearch', function() {
-            var key = $("#keySearch").val();
-            $.post("WS/konsultasi-search-nama.php", {
-                key: key
-            }).done(function(data) {
-                $('#tabelReservasi').html(data);
-            });
-        });
-
         $('body').on('change', '.checkboxjadwal', function() {
-            var curValue = $(this).val();   
-            if(curValue == "aktif"){
+            var curValue = $(this).val();
+            if (curValue == "aktif") {
                 $(this).val("nonaktif");
-            }else{
+            } else {
                 $(this).val("aktif");
             }
             var curValue = $(this).val();
+        });
+
+
+        $('body').on('click', '#btnSimpan', function(event) {
+            event.preventDefault();
+            var slotBaru = [];
+            var idDokter = $("#idDokter").val();
+            $.each($("input:checkbox[name='slot']"), function() {
+                
+                slotBaru.push({
+                    hari: $(this).attr('hari'),
+                    jam: $(this).attr('jam'),
+                    status: $(this).val()
+                });
+            });
+
+            $.post("WS/Jadwal-edit.php", {
+                slot: slotBaru,
+                idDokter: idDokter,
+
+            }).done(function(data) {
+                var result = JSON.parse(data);
+                if (result.result == "success") {
+                    alert(result.message);
+                    window.location = "pengaturanjadwal.php";
+                } else {
+                    alert(result.message);
+                }
+            });
         });
     </script>
 

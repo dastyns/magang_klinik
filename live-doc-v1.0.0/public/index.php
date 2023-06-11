@@ -54,8 +54,8 @@ session_start();
           <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
             
             <?php
-            if (isset($_SESSION["email"])) {
-              if ($_SESSION["email"] == "klinik") {
+            if (isset($_SESSION["idPengguna"])) {
+              if ($_SESSION["idPengguna"] == "1" || $_SESSION["idPengguna"] == "2" || $_SESSION["idPengguna"] == "3"){
                 echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>Reservasi</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='consultation.php'>Konsultasi Dokter</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='daftarperawatan.php'>Perawatan</a></li>";

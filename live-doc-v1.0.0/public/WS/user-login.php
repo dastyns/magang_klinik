@@ -33,6 +33,7 @@ if ($conn->connect_error) {
 			$r = $result->fetch_assoc();
 			$arr = ["result" => "success", "data" => $r];
 			$_SESSION["email"] = $r["email"];
+			$_SESSION["idPengguna"] = $r["id"];
 		} else {
 			$arr = ["result" => "error", "message" => "Sign In gagal. Email atau Password salah"];
 		}

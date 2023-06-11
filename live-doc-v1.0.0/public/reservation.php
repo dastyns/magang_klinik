@@ -248,6 +248,7 @@ date_default_timezone_set("Asia/Jakarta");
 		var user = $("#user").val();
 		var dokter = $('#dokter').val();
 		var day = new Date(tanggalReservasi);
+		
 		alert(arrayDay[day.getDay()]);
 
 		$.post("WS/check-jam.php", {
