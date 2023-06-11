@@ -116,8 +116,8 @@ session_start();
         <div class="head">
             <h3 style="color:#283779;">Daftar Reservasi Online</h3>
             <?php
-                if($_SESSION['email'] == "klinik"){
-                    echo "<div class='containerSearch'>
+            if ($_SESSION['email'] == "klinik") {
+                echo "<div class='containerSearch'>
                     <table class='tableSearch'>
                         <tr>
                         <td><input type='text' class='search' placeholder='Search Name' id='keySearch'></td>
@@ -125,7 +125,7 @@ session_start();
                         </tr>
                     </table>
                 </div>";
-                }
+            }
             ?>
         </div>
         <section class="ftco-section">
@@ -147,7 +147,12 @@ session_start();
                                     <th>
                                         <h6>Keluhan</h6>
                                     </th>
-                                    <th>Aksi</th>
+                                    <th>
+                                        <h6>Status</h6>
+                                    </th>
+                                    <th>
+                                        <h6>Aksi</h6>
+                                    </th>
                                 </tr>
 
                                 <?php
@@ -155,7 +160,7 @@ session_start();
                                 $conn = new mysqli("localhost", "root", "", "dbmagang");
                                 $pengguna = $_SESSION['email'];
                                 if ($pengguna == "klinik") {
-                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi,J.hari, J.jam, R.keluhan, R.id
+                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi,J.hari, J.jam, R.keluhan, R.id, R.status_reservasi
                                                 FROM penggunas as P 
                                                 INNER JOIN reservasis as R on P.id = R.pengguna_id
                                                 INNER JOIN jams as J on J.id = R.jam_id
@@ -170,19 +175,32 @@ session_start();
                                             echo "<td class='tabel'>" . $row['hari'] . ", " . date("d F Y", strtotime($row["tanggalReservasi"])) . "</td>";
                                             echo "<td class='tabel'>" . $row["jam"] . "</td>";
                                             echo "<td class='tabel'>" . $row["keluhan"] . "</td>";
-                                            echo "<td class='tabel'><a href='insertkonsul.php?idReservasi=" . $row["id"] . "'>
-                                            <button type='button' class='btnDetil'>Konfirmasi</button></a>
-                                            <button type='button' class='btnDetil' id='btnBatalkan' idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
+                                            echo "<td class='tabel'>" . $row["status_reservasi"] . "</td>";
+                                            if (($row["status_reservasi"] == "baru")) {
+                                                echo "<td class='tabel'><a href='insertkonsul.php?idReservasi=" . $row["id"] . "'>
+                                            <button type='button' class='btnDetil'>Konfirmasi</button></a>";
+                                            }
+                                            else{
+                                                echo "<td></td>";
+                                            }
+                                            
+                                            if (($row["status_reservasi"] == "dibatalkan pasien") || ($row["status_reservasi"] == "dibatalkan klinik")) {
+                                                echo "<button type='button' class='btnDetil' 
+                                            id='btnBatalkan' idReservasiBatal='" . $row["id"] . "' hidden>Batalkan</button></td>";
+                                            }
+                                            else{
+                                                echo "&nbsp; <button type='button' class='btnDetil' 
+                                            id='btnBatalkan' idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
+                                            }
                                             echo "</tr>";
                                         }
                                     }
-                                }
-                                else{
-                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi, J.jam, R.keluhan, R.id
+                                } else {
+                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi, J.jam, R.keluhan, R.id, R.status_reservasi
                                                 FROM penggunas as P 
                                                 INNER JOIN reservasis as R on P.id = R.pengguna_id
                                                 INNER JOIN jams as J on J.id = R.jam_id
-                                                WHERE date(R.tanggal_reservasi) >= curdate() and R.status_reservasi='1' and P.email=?
+                                                WHERE date(R.tanggal_reservasi) >= curdate() and P.email=?
                                                 order by date(R.tanggal_reservasi), J.jam";
 
                                     $stmt = $conn->prepare($sql);
@@ -197,8 +215,16 @@ session_start();
                                             echo "<td class='tabel'>" . date("d F Y", strtotime($row["tanggalReservasi"])) . "</td>";
                                             echo "<td class='tabel'>" . $row["jam"] . "</td>";
                                             echo "<td class='tabel'>" . $row["keluhan"] . "</td>";
-                                            echo "<td class='tabel'><button type='button' class='btnDetil' 
-                                            id='btnBatalkan' idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
+                                            echo "<td class='tabel'>" . $row["status_reservasi"] . "</td>";
+                                            if (($row["status_reservasi"] == "dibatalkan pasien") || ($row["status_reservasi"] == "dibatalkan klinik")) {
+                                                echo "<td class='tabel'><button type='button' class='btnDetil' 
+                                             idReservasiBatal='" . $row["id"] . "' hidden>Batalkan</button></td>";
+                                            }
+                                            else{
+                                                echo "<td class='tabel'><button type='button' class='btnDetil' 
+                                                 idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
+                                            }
+
                                             echo "</tr>";
                                         }
                                     }
@@ -228,18 +254,13 @@ session_start();
         });
     });
 
-    $('body').on('click', '#btnBatalkan', function(event) {
-        event.preventDefault();
+    $('body').on('click', '.btnDetil', function() {
         var idReservasi = $(this).attr('idReservasiBatal');
-        //alert(idReservasi);
-       
-        
         $.post("WS/reservasi-batalkan.php", {
-            idReservasi: idReservasi
+            idReservasi: idReservasi,
         }).done(function(data) {
             var result = JSON.parse(data);
             if (result.result == "success") {
-                
                 alert(result.message);
                 window.location = "reservationList.php";
             } else {

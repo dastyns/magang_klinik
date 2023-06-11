@@ -171,54 +171,53 @@
                 <div class="row">
                     <form>
                         <div class="col-md-12">
-                            <div class="text-right"><button type='button' class='btnDetil' id='btnSimpan'>SIMPAN</button>
-                                <div><br>
+                            <div class="text-right"><button type='button' class='btnDetil' id='btnSimpan'>SIMPAN</button></div><br>
                                 <input type="hidden" name="idDokter" id="idDokter" value="<?php echo $_SESSION["idPengguna"] ?>">
-                                    <div class="table-wrap" id="tabelReservasi">
-                                        <table class="table table-responsive-xl">
-                                            <tr class="tabel">
-                                                <th>Jam</th>
-                                                <?php
+                                <div class="table-wrap" id="tabelReservasi">
+                                    <table class="table table-responsive-xl  align-items-center">
+                                        <tr class="tabel">
+                                            <th>Jam</th>
+                                            <?php
+                                            foreach ($dataHari as $dh) {
+                                                echo "<th>" . $dh['hari'] . "</th>";
+                                            }
+                                            ?>
+                                        </tr>
+                                        <tr>
+                                            <?php
+                                            foreach ($dataJam as $dj) {
+                                                echo "<tr>";
+                                                echo "<td class='tabel'>" . $dj['jam'] . "</td>";
                                                 foreach ($dataHari as $dh) {
-                                                    echo "<th>" . $dh['hari'] . "</th>";
-                                                }
-                                                ?>
-                                            </tr>
-                                            <tr>
-                                                <?php
-                                                foreach ($dataJam as $dj) {
-                                                    echo "<tr>";
-                                                    echo "<td class='tabel'>" . $dj['jam'] . "</td>";
-                                                    foreach ($dataHari as $dh) {
-                                                        echo "<td class='tabel'>";
-                                                        foreach ($dataHariStatus as $djs) {
-                                                            if ($djs['hari'] == $dh['hari'] && $djs['jam'] == $dj['jam']) {
-                                                                if ($djs['status'] == "aktif") {
-                                                                    echo "<div class='form__group'>";
-                                                                    // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='aktif' class='checkboxjadwal' checked>";
-                                                                    echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='aktif' class='checkboxjadwal' checked>";
-                                                                    echo "</div>";
-                                                                } else {
-                                                                    echo "<div class='form__group'>";
-                                                                    // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='nonaktif' class='checkboxjadwal'>";
-                                                                    echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='nonaktif' class='checkboxjadwal'>";
-                                                                    echo "</div>";
-                                                                }
+                                                    echo "<td class='tabel'>";
+                                                    foreach ($dataHariStatus as $djs) {
+                                                        if ($djs['hari'] == $dh['hari'] && $djs['jam'] == $dj['jam']) {
+                                                            if ($djs['status'] == "aktif") {
+                                                                echo "<div class='form__group'>";
+                                                                // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='aktif' class='checkboxjadwal' checked>";
+                                                                echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='aktif' class='checkboxjadwal' checked>";
+                                                                echo "</div>";
+                                                            } else {
+                                                                echo "<div class='form__group'>";
+                                                                // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='nonaktif' class='checkboxjadwal'>";
+                                                                echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='nonaktif' class='checkboxjadwal'>";
+                                                                echo "</div>";
                                                             }
                                                         }
-                                                        echo "</td>";
                                                     }
-
-                                                    echo "</tr>";
+                                                    echo "</td>";
                                                 }
-                                                ?>
-                                            </tr>
-                                        </table>
-                                    </div>
+
+                                                echo "</tr>";
+                                            }
+                                            ?>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                </div>
+                </form>
         </section>
     </main>
 
@@ -242,7 +241,7 @@
             var slotBaru = [];
             var idDokter = $("#idDokter").val();
             $.each($("input:checkbox[name='slot']"), function() {
-                
+
                 slotBaru.push({
                     hari: $(this).attr('hari'),
                     jam: $(this).attr('jam'),

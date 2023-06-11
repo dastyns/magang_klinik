@@ -51,10 +51,9 @@ if ($tanggalRes < $curdate) {
 			$curhour = date("H.i");
 			if ($curdate == $tanggalRes) {
 				while ($row = $result->fetch_assoc()) {
-					// if (strtotime($row["jam"]) >= strtotime($curhour) || $row['jam'] == "lainnya") {
-						
-					// }
-					echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
+					if (strtotime($row["jam"]) >= strtotime($curhour) || $row['jam'] == "lainnya") {
+						echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
+					}
 				}
 			} else {
 				while ($row = $result->fetch_assoc()) {

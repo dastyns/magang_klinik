@@ -1,13 +1,11 @@
 <?php
 
 session_start();
-if ($_SESSION['nomor_telepon'] == "klinik") {
+if ($_SESSION['email'] == "klinik") {
 	$nomor_telepon = $_POST['nomor_telepon'];
-} else {
-	$nomor_telepon = $_SESSION['nomor_telepon'];
 }
-$tanggalReservasi = $_POST['tanggalReservasi'];
 
+$tanggalReservasi = $_POST['tanggalReservasi'];
 $jam = $_POST['jam'];
 $keluhan = $_POST['keluhan'];
 $nama = $_POST['nama'];
@@ -35,9 +33,9 @@ if ($conn->connect_error) {
 			$result2 = $stmt2->get_result();
 
 			if ($result2->num_rows > 0) {
-				$arr = ["result" => "error", "message" => "Batas melakukan reservasi hanya 1 kali per hari"];
+				$arr = ["result" => "error", "message" => "Pengguna telah melakukan reservasi pada hari ini!"];
 			} else {
-				$status = "1";
+				$status = "baru";
 				$sql = "INSERT into reservasis(tanggal_reservasi,keluhan, pengguna_id, status_reservasi, jam_id) VALUES(?,?,?,?,?)";
 				$stmt = $conn->prepare($sql);
 				$stmt->bind_param("ssiss", $tanggalReservasi, $keluhan, $row["id"], $status, $jam);
@@ -72,9 +70,9 @@ if ($conn->connect_error) {
 					$result2 = $stmt2->get_result();
 
 					if ($result2->num_rows > 0) {
-						$arr = ["result" => "error", "message" => "Batas melakukan reservasi hanya 1 kali per hari"];
+						$arr = ["result" => "error", "message" => "Pengguna telah melakukan reservasi pada hari ini!"];
 					} else {
-						$status = "1";
+						$status = "baru";
 						$sql = "INSERT into reservasis(tanggal_reservasi,keluhan, pengguna_id, status_reservasi, jam_id) VALUES(?,?,?,?,?)";
 						$stmt = $conn->prepare($sql);
 						$stmt->bind_param("ssiss", $tanggalReservasi, $keluhan, $row["id"], $status, $jam);

@@ -48,9 +48,9 @@ date_default_timezone_set("Asia/Jakarta");
 								<div class="form-group">
 									<span class="txtLabel">Dokter</span>
 									<select class="form-control" required id="dokter">
-									<?php
+										<?php
 										$conn = new mysqli("localhost", "root", "", "dbmagang");
-										
+
 										$sql = "SELECT * from dokters";
 
 
@@ -84,23 +84,23 @@ date_default_timezone_set("Asia/Jakarta");
 									<span class="txtLabel">Jam Datang</span>
 									<select class="form-control" id="jam">
 										<?php
-										
+
 										$conn = new mysqli("localhost", "root", "", "dbmagang");
-										$arrHari = ["Minggu","Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+										$arrHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 										$tanggalHariIni = date('Y-m-d');
 										$namaHari = $arrHari[date("w", strtotime($tanggalHariIni))];
 										$namaHariSemua = "Semua";
 										$id1 = 127;
 										$id2 = 128;
 										$iddokter = 1;
-										$status="aktif";
+										$status = "aktif";
 										if ($_SESSION['email'] == "klinik") {
 											$sql = "SELECT * from jams
 													where id not in (select jam_id 
 													from reservasis
 													where tanggal_reservasi = ?) and dokter_id = ? and hari in (?,?) and status=?";
 											$stmt = $conn->prepare($sql);
-											$stmt->bind_param("sisss", $tanggalHariIni, $iddokter, $namaHari, $namaHariSemua ,$status);
+											$stmt->bind_param("sisss", $tanggalHariIni, $iddokter, $namaHari, $namaHariSemua, $status);
 										} else {
 											$sql = "SELECT * from jams
 											where id not in (select jam_id
@@ -109,7 +109,7 @@ date_default_timezone_set("Asia/Jakarta");
 											$stmt = $conn->prepare($sql);
 											$stmt->bind_param("siiiss", $tanggalHariIni, $id1, $id2, $iddokter, $namaHari, $status);
 										}
-										
+
 										$stmt->execute();
 										$result = $stmt->get_result();
 
@@ -119,7 +119,7 @@ date_default_timezone_set("Asia/Jakarta");
 											while ($row = $result->fetch_assoc()) {
 												echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
 												// if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
-													
+
 												// }
 											}
 										}
@@ -153,7 +153,7 @@ date_default_timezone_set("Asia/Jakarta");
 							<div class="col-md-10">
 								<div class="form-group">
 									<label class="txtLabel">Keluhan</span>
-									<textarea class="form-keluhan" cols="50" id="keluhan"></textarea>
+										<textarea class="form-keluhan" cols="50" id="keluhan"></textarea>
 								</div>
 							</div>
 						</div>
@@ -192,7 +192,7 @@ date_default_timezone_set("Asia/Jakarta");
 					var result = JSON.parse(data);
 					if (result.result == "success") {
 						alert(result.message);
-							
+						window.location = "index.php";
 					} else {
 						alert(result.message);
 					}
@@ -202,7 +202,7 @@ date_default_timezone_set("Asia/Jakarta");
 			$.post("WS/reservasi-insert-online.php", {
 				jam: jam,
 				tanggalReservasi: tanggalReservasi,
-				keluhan: keluhan
+				keluhan: keluhan,
 			}).done(function(data) {
 				var result = JSON.parse(data);
 				if (result.result == "success") {
@@ -213,68 +213,72 @@ date_default_timezone_set("Asia/Jakarta");
 				}
 			});
 		}
-
-		// if ($('#datangLangsung').is(":checked")){
-		// 	jam = 9;
-		// }
-
-		// alert("masuk");
-		// var nama = $("#nama").val();
-		// var nomor_telepon = $("#nomorTelepon").val();
-		// alert(nama);
-		// alert(nomor_telepon);
-
-		// $.post("WS/reservasi-insert-offline.php", {
-		// 	nomor_telepon: nomor_telepon,
-		// 	nama: nama,
-		// 	jam: jam,
-		// 	tanggalReservasi: tanggalReservasi,
-		// 	keluhan: keluhan
-		// }).done(function(data) {
-		// 	var result = JSON.parse(data);
-		// 	if (result.result == "success") {
-		// 		alert(result.message);
-		// 		window.location = "index.php";
-		// 	} else {
-		// 		alert(result.message);
-		// 	}
-		// });
-
 	});
 
 	$('body').on('change', '#tanggal', function() {
-		var arrayDay = ["Minggu","Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+		var arrayDay = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 		var tanggalReservasi = $("#tanggal").val();
 		var user = $("#user").val();
 		var dokter = $('#dokter').val();
 		var day = new Date(tanggalReservasi);
-		
-		alert(arrayDay[day.getDay()]);
-
-		$.post("WS/check-jam.php", {
-			tanggalReservasi: tanggalReservasi,
-			user: user,
-			dokter: dokter
-
-		}).done(function(data) {
-			if (data != "warning") {
-				$("#jam").html(data);
-				$("#btnKonfirmasi").attr("disabled", false);
-				// if ($('#datangLangsung').is(":checked")) {
-				// 	$("#jam").attr("disabled", true);
-				// } else {
-				// 	$("#jam").attr("disabled", false);
-				// }
-				$("#jam").attr("disabled", false);
-				$("#keluhan").attr("disabled", false);
-			} else {
-				alert("Silahkan memilih tanggal yang sesuai");
+		var now = new Date();
+		var curr = new Date();
+		var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+		var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay() + 6));
+		// var hariIni = new Date();
+		// var minggu = new Date(hariIni.setDate(hariIni.getDate() - hariIni.getDay() + 6));
+		day.setHours(0,0,0,0);
+		now.setHours(0,0,0,0);
+		firstday.setHours(0,0,0,0);
+		lastday.setHours(0,0,0,0);
+		// alert(day);
+		// alert(now);
+		// alert(firstday);
+		// alert(lastday);
+		// alert(arrayDay[day.getDay()]);
+		if (day <= lastday && day >= firstday) {
+			if (day < now) {
+				alert("Silahkan memilih tanggal yang sesuai atau lebih dari minggu ini");
 				$("#btnKonfirmasi").attr("disabled", true);
 				$("#jam").attr("disabled", true);
 				$("#keluhan").attr("disabled", true);
-			}
+			} else {
+				$.post("WS/check-jam.php", {
+					tanggalReservasi: tanggalReservasi,
+					user: user,
+					dokter: dokter
 
-		});
+				}).done(function(data) {
+					if (data != "warning") {
+						$("#jam").html(data);
+						$("#btnKonfirmasi").attr("disabled", false);
+						// if ($('#datangLangsung').is(":checked")) {
+						// 	$("#jam").attr("disabled", true);
+						// } else {
+						// 	$("#jam").attr("disabled", false);
+						// }
+						$("#jam").attr("disabled", false);
+						$("#keluhan").attr("disabled", false);
+					} else {
+						alert("Silahkan memilih tanggal yang sesuai");
+						$("#btnKonfirmasi").attr("disabled", true);
+						$("#jam").attr("disabled", true);
+						$("#keluhan").attr("disabled", true);
+						
+					}
+				});
+			}
+		} else {
+			var bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+			var tanggalMulai = firstday.getDate() + " " + bulan[firstday.getMonth()] + " " + firstday.getFullYear();
+			var tanggalAkhir = lastday.getDate() + " " + bulan[lastday.getMonth()] + " " + lastday.getFullYear();
+			alert("Silahkan memilih tanggal dalam minggu ini(" + tanggalMulai + " - " + tanggalAkhir + ")");
+			$("#btnKonfirmasi").attr("disabled", true);
+			$("#jam").attr("disabled", true);
+			$("#keluhan").attr("disabled", true);
+		}
+
+
 	});
 
 	$('body').on('change', '#dokter', function() {
@@ -307,17 +311,17 @@ date_default_timezone_set("Asia/Jakarta");
 		});
 	});
 
-	$('body').on('click', '#datangLangsung', function() {
-		if ($(this).is(":checked")) {
-			$("#divInputNama").prop("hidden", false);
-			$("#divInputNomorTelepon").prop("hidden", false);
-			// $("#jam").attr("disabled", true);
-		} else {
-			$("#divInputNama").prop("hidden", true);
-			$("#divInputNomorTelepon").prop("hidden", true);
-			// $("#jam").attr("disabled", false);
-		}
-	});
+	// $('body').on('click', '#datangLangsung', function() {
+	// 	if ($(this).is(":checked")) {
+	// 		$("#divInputNama").prop("hidden", false);
+	// 		$("#divInputNomorTelepon").prop("hidden", false);
+	// 		// $("#jam").attr("disabled", true);
+	// 	} else {
+	// 		$("#divInputNama").prop("hidden", true);
+	// 		$("#divInputNomorTelepon").prop("hidden", true);
+	// 		// $("#jam").attr("disabled", false);
+	// 	}
+	// });
 </script>
 
 </html>

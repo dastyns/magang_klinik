@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 11, 2023 at 08:20 AM
+-- Generation Time: Jun 11, 2023 at 12:20 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.30
 
@@ -262,7 +262,8 @@ INSERT INTO `penggunas` (`id`, `nama`, `nomor_telepon`, `email`, `password`, `ta
 (1, 'Toton Yuswanto', '', 'totonyuswanto@gmail.com', '12345', '2023-06-02 19:18:33'),
 (2, 'Umi Yuswanto', '082188888888', 'umiyuswanto@gmail.com', '12345', '2023-06-03 00:00:55'),
 (3, 'Klinik', '0082134345656', 'klinik', 'klinik', '2023-06-11 12:29:26'),
-(4, 'Kenny', '082165658787', 'kenkwando08@gmail.com', '12345', '2023-06-11 12:29:26');
+(4, 'Kenny', '082165658787', 'kenkwando08@gmail.com', '12345', '2023-06-11 12:29:26'),
+(5, 'Budi Hartanto', '123412341234', '', '', '2023-06-11 16:46:12');
 
 -- --------------------------------------------------------
 
@@ -279,6 +280,14 @@ CREATE TABLE `reservasis` (
   `jam_id` int(11) NOT NULL,
   `tanggal_pesan` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `reservasis`
+--
+
+INSERT INTO `reservasis` (`id`, `tanggal_reservasi`, `keluhan`, `status_reservasi`, `pengguna_id`, `jam_id`, `tanggal_pesan`) VALUES
+(7, '2023-06-11 00:00:00', 's d', 'dibatalkan pasien', 4, 56, '2023-06-11 15:48:10'),
+(8, '2023-06-11 00:00:00', 'aa', 'dibatalkan klinik', 5, 57, '2023-06-11 16:46:12');
 
 -- --------------------------------------------------------
 
@@ -391,13 +400,13 @@ ALTER TABLE `konsultasis`
 -- AUTO_INCREMENT for table `penggunas`
 --
 ALTER TABLE `penggunas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `reservasis`
 --
 ALTER TABLE `reservasis`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `ulasans`
