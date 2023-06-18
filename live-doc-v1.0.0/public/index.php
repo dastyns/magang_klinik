@@ -59,8 +59,11 @@ session_start();
                 echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>Reservasi</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='consultation.php'>Konsultasi Dokter</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='daftarperawatan.php'>Perawatan</a></li>";
-                echo "<li class='nav-item px-2'><a class='nav-link' href='pengaturanjadwal.php'>Jadwal Reservasi</a></li>";
-              } else {
+                if($_SESSION["idPengguna"] != "3"){
+                  echo "<li class='nav-item px-2'><a class='nav-link' href='pengaturanjadwal.php'>Jadwal Reservasi</a></li>";
+                }
+              }
+              else {
                 echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>Reservasi</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='detilkonsulpasien.php'>Konsultasi Pasien</a></li>";
               }

@@ -98,14 +98,14 @@ date_default_timezone_set("Asia/Jakarta");
 											$sql = "SELECT * from jams
 													where id not in (select jam_id 
 													from reservasis
-													where tanggal_reservasi = ?) and dokter_id = ? and hari in (?,?) and status=?";
+													where tanggal_reservasi = ? and status_reservasi!='baru') and dokter_id = ? and hari in (?,?) and status=?";
 											$stmt = $conn->prepare($sql);
 											$stmt->bind_param("sisss", $tanggalHariIni, $iddokter, $namaHari, $namaHariSemua, $status);
 										} else {
 											$sql = "SELECT * from jams
 											where id not in (select jam_id
 											from reservasis
-											where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id= ? and hari=? and status=?";
+											where tanggal_reservasi = ? and status_reservasi!='baru') and id != ? and id != ? and dokter_id= ? and hari=? and status=?";
 											$stmt = $conn->prepare($sql);
 											$stmt->bind_param("siiiss", $tanggalHariIni, $id1, $id2, $iddokter, $namaHari, $status);
 										}
@@ -116,11 +116,10 @@ date_default_timezone_set("Asia/Jakarta");
 										if ($result->num_rows > 0) {
 
 											$curhour = date("H.i");
-											while ($row = $result->fetch_assoc()) {
-												echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
-												// if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
-
-												// }
+											while ($row = $result->fetch_assoc()) {	
+												if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
+													echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
+												}
 											}
 										}
 

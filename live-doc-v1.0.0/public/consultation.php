@@ -150,7 +150,7 @@
 
                                 $conn = new mysqli("localhost", "root", "", "dbmagang");
 
-                                $sql = "SELECT P.nama, date(KO.tanggal_konsultasi) as tanggalTerakhir, KO.tanggal_balik, P.id
+                                $sql = "SELECT P.nama, R.tanggal_reservasi, KO.tanggal_balik, P.id
                                         FROM penggunas as P
                                         INNER JOIN reservasis AS R on P.id = R.pengguna_id
                                         INNER JOIN konsultasis as KO on R.id = KO.reservasi_id
@@ -158,7 +158,7 @@
                                         SELECT MAX(K.id)
                                         FROM konsultasis as K
                                         INNER JOIN reservasis AS R ON R.id = K.reservasi_id
-                                        GROUP BY R.pengguna_id);";
+                                        GROUP BY R.pengguna_id)";
 
                                 $result = $conn->query($sql);
 
@@ -177,9 +177,6 @@
                                         echo "</tr>";
                                     }
                                 }
-                                else{
-                                    echo "Tidak ada konsultasi yang terdaftar";
-                                }   
 
                                 ?>
 
@@ -221,13 +218,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&amp;display=swap" rel="stylesheet">
     <script>
         $('body').on('click', '#btnSearch', function() {
-        var key = $("#keySearch").val();
-        $.post("WS/konsultasi-search-nama.php", {
-            key: key
-        }).done(function(data) {
-            $('#tabelReservasi').html(data);
+            var key = $("#keySearch").val();
+            $.post("WS/konsultasi-search-nama.php", {
+                key: key
+            }).done(function(data) {
+                $('#tabelReservasi').html(data);
+            });
         });
-    });
     </script>
 
 </body>

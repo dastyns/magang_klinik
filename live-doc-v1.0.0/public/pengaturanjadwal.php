@@ -138,8 +138,8 @@
             }
         }
 
-        $sql = "SELECT jam, hari, status FROM jams where dokter_id=? and hari!='semua'";
-        $stmt = $conn->prepare($sql);
+        $sql1 = "SELECT jam, hari, status FROM jams where dokter_id=? and hari!='semua'";
+        $stmt = $conn->prepare($sql1);
         $stmt->bind_param("i",  $id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -152,8 +152,8 @@
             }
         }
 
-        $sql = "SELECT DISTINCT(hari) FROM jams where dokter_id=? and hari!='semua'";
-        $stmt = $conn->prepare($sql);
+        $sql2 = "SELECT DISTINCT(hari) FROM jams where dokter_id=? and hari!='semua'";
+        $stmt = $conn->prepare($sql2);
         $stmt->bind_param("i",  $id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -207,7 +207,6 @@
                                                     }
                                                     echo "</td>";
                                                 }
-
                                                 echo "</tr>";
                                             }
                                             ?>

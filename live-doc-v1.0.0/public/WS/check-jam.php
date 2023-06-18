@@ -32,14 +32,14 @@ if ($tanggalRes < $curdate) {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id 
 					from reservasis
-					where tanggal_reservasi = ?)  and dokter_id = ? and hari in (?,?) and status=?";
+					where tanggal_reservasi = ? and status_reservasi='baru')  and dokter_id = ? and hari in (?,?) and status=?";
 			$stmt = $conn->prepare($sql);
 			$stmt->bind_param("sisss", $tanggalReservasi, $dokter, $namaHari, $namaHariSemua, $status);
 		} else {
 			$sql = "SELECT * from jams
 					where id not in (select jam_id
 					from reservasis
-					where tanggal_reservasi = ?) and id != ? and id != ? and dokter_id = ? and hari=? and status=?";
+					where tanggal_reservasi = ? and status_reservasi='baru') and id != ? and id != ? and dokter_id = ? and hari=? and status=?";
 			$stmt = $conn->prepare($sql);
 			$stmt->bind_param("siiiss", $tanggalReservasi, $id1, $id2, $dokter, $namaHari, $status);
 		}
