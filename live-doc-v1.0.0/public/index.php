@@ -52,18 +52,17 @@ session_start();
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"> </span></button>
         <div class="collapse navbar-collapse border-top border-lg-0 mt-4 mt-lg-0" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto pt-2 pt-lg-0 font-base">
-            
+
             <?php
             if (isset($_SESSION["idPengguna"])) {
-              if ($_SESSION["idPengguna"] == "1" || $_SESSION["idPengguna"] == "2" || $_SESSION["idPengguna"] == "3"){
+              if ($_SESSION["idPengguna"] == "1" || $_SESSION["idPengguna"] == "2" || $_SESSION["idPengguna"] == "3") {
                 echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>Reservasi</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='consultation.php'>Konsultasi Dokter</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='daftarperawatan.php'>Perawatan</a></li>";
-                if($_SESSION["idPengguna"] != "3"){
+                if ($_SESSION["idPengguna"] != "3") {
                   echo "<li class='nav-item px-2'><a class='nav-link' href='pengaturanjadwal.php'>Jadwal Reservasi</a></li>";
                 }
-              }
-              else {
+              } else {
                 echo "<li class='nav-item px-2'><a class='nav-link' href='reservationList.php'>Reservasi</a></li>";
                 echo "<li class='nav-item px-2'><a class='nav-link' href='detilkonsulpasien.php'>Konsultasi Pasien</a></li>";
               }
@@ -440,20 +439,44 @@ session_start();
         <div class="row align-items-center offset-sm-1">
           <div class="carousel slide" id="carouselPeople" data-bs-ride="carousel">
             <div class="carousel-inner">
-              <div class="carousel-item active" data-bs-interval="10000">
-                <div class="row h-100">
-                  <div class="col-sm-3 text-center"><img src="assets/img/gallery/people-who-loves.png" width="100" alt="" />
-                    <h5 class="mt-3 fw-medium text-secondary">Edward Newgate</h5>
-                    <p class="fw-normal mb-0">Founder Circle</p>
-                  </div>
-                  <div class="col-sm-9 text-center text-sm-start pt-3 pt-sm-0">
-                    <h2>Fantastic Response!</h2>
-                    <div class="my-2"><i class="fas fa-star me-2"></i><i class="fas fa-star me-2"></i><i class="fas fa-star me-2"></i><i class="fas fa-star-half-alt me-2"></i><i class="far fa-star"></i></div>
-                    <p>This medical and health care facility distinguishes itself from the competition by providing technologically advanced medical and health care. A mobile app and a website are available via which you can easily schedule appointments, get online consultations, and see physicians, who will assist you through the whole procedure. And all of the prescriptions, medications, and other services they offer are 100% genuine, medically verified, and proved. I believe that the Livedoc staff is doing an outstanding job. Highly recommended their health care services.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="carousel-item" data-bs-interval="2000">
+              <?php
+              $conn = new mysqli("localhost", "root", "", "dbmagang");
+              $status = 'tampil';
+              $sql = "SELECT u.ulasan, p.nama 
+                      FROM ulasans u
+                      INNER JOIN konsultasis k ON u.konsultasi_id = k.id
+                      INNER JOIN reservasis r ON k.reservasi_id = r.id
+                      INNER JOIN penggunas p ON r.pengguna_id = p.id
+                      WHERE u.status=?
+                      LIMIT 4";
+              $stmt = $conn->prepare($sql);
+              $stmt->bind_param("s", $status);
+              $stmt->execute();
+              $result = $stmt->get_result();
+
+              if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                  echo "<div class='carousel-item active' data-bs-interval='10000'>";
+                  echo "<div class='row h-100'>";
+                  echo "<div class='col-sm-3 text-center'>";
+                  echo "<h5 class='mt-3 fw-large text-secondary'>Pelanggan Puas dengan Pelayanan Rumah Gigi Sidoarjo</h5>";
+                  echo "</div>";
+                  echo "<div class='col-sm-9 text-center text-sm-start pt-3 pt-sm-0'>";
+                  echo "<h2>" . $row['nama'] . "</h2>";
+                  echo "<p>" . $row['ulasan'] . "</p>";
+                  echo "</div>";
+                  echo "</div>";
+                  echo "</div>";
+                  echo "</div>";
+                }
+              }
+              ?>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- <div class="carousel-item" data-bs-interval="2000">
                 <div class="row h-100">
                   <div class="col-sm-3 text-center"><img src="assets/img/gallery/people-who-loves.png" width="100" alt="" />
                     <h5 class="mt-3 fw-medium text-secondary">Jhon Doe</h5>
@@ -465,10 +488,10 @@ session_start();
                     <p>This medical and health care facility distinguishes itself from the competition by providing technologically advanced medical and health care. A mobile app and a website are available via which you can easily schedule appointments, get online consultations, and see physicians, who will assist you through the whole procedure. And all of the prescriptions, medications, and other services they offer are 100% genuine, medically verified, and proved. I believe that the Livedoc staff is doing an outstanding job. Highly recommended their health care services.</p>
                   </div>
                 </div>
-              </div>
-              <div class="carousel-item">
+              </div> -->
+    <!-- <div class="carousel-item">
                 <div class="row h-100">
-                  <div class="col-sm-3 text-center"><img src="assets/img/gallery/people-who-loves.png" width="100" alt="" />
+                  <div class="col-sm-3 text-center">
                     <h5 class="mt-3 fw-medium text-secondary">Jeny Doe</h5>
                     <p class="fw-normal mb-0">Web Designer</p>
                   </div>
@@ -488,11 +511,8 @@ session_start();
                   <li data-bs-target="#carouselPeople" data-bs-slide-to="2"> </li>
                 </ol>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+            </div> -->
+
 
 
     <!-- ============================================-->
