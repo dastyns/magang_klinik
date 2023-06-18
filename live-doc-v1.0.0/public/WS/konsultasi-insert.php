@@ -1,13 +1,19 @@
 <?php
-function update($con, $id)
+function updateReservasiInsertDetailPerawatan($con, $id, $daftarPerawatan, $idKonsultasi)
 {
-	$status = '0';
+	$status = 'selesai';
 	$sql1 = "UPDATE reservasis SET status_reservasi=? where id=?";
 	$stmt1 = $con->prepare($sql1);
-	$stmt1->bind_param("si",$status, $id);
+	$stmt1->bind_param("si", $status, $id);
 	$stmt1->execute();
 
 	if ($stmt1->affected_rows > 0) {
+		foreach($daftarPerawatan as $perawatan){
+			$sql2 = "INSERT INTO jenis_perawatan_konsultasi(jenis_perawatan_id, konsultasi_id, harga, posisi_gigi) VALUES(?,?,?,?)";
+			$stmt2 = $con->prepare($sql2);
+			$stmt2->bind_param('iiis', $perawatan["idPerawatan"], $idKonsultasi, $perawatan["harga"], $perawatan["posisiGigi"]);
+			$stmt2->execute();
+		}
 		$arr = ["result" => "success", "message" => "Konsultasi berhasil tersimpan"];
 	} else {
 		$arr = ["result" => "success", "message" => "Konsultasi gagal tersimpan"];
@@ -18,13 +24,10 @@ function update($con, $id)
 
 $idReservasi = $_POST['idReservasi'];
 $obat = $_POST['obat'];
-$biaya = $_POST['biaya'];
+$totalharga = $_POST['totalHarga'];
 $keterangan = $_POST['keterangan'];
-$tanggalbalik = $_POST['tanggalbalik'];
-$status = "1";
-$jam = $_POST['jam'];
 $idPengguna = $_POST['idPengguna'];
-$tanggalkonsul = $_POST['tanggal'];
+$daftarPerawatan = $_POST['daftarPerawatan'];
 
 
 $conn = new mysqli("localhost", "root", "", "dbmagang");
@@ -32,32 +35,14 @@ $conn = new mysqli("localhost", "root", "", "dbmagang");
 if ($conn->connect_error) {
 	$arr = ["result" => "error", "message" => "Error Connect DB"];
 } else {
-	if ($tanggalbalik == "") {
-		$sql = "INSERT into konsultasis(keterangan, obat, biaya, status_konsultasi, reservasi_id) VALUES(?,?,?,?,?)";
-		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("ssisi", $keterangan, $obat, $biaya, $status, $idReservasi);
-	} else {
-		$sql = "INSERT into konsultasis(keterangan, obat, biaya, status_konsultasi, tanggal_balik, reservasi_id) VALUES(?,?,?,?,?,?)";
-		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("ssissi", $keterangan, $obat, $biaya, $status, $tanggalbalik, $idReservasi);
-	}
+	$sql = "INSERT into konsultasis(keterangan, obat, total_harga, reservasi_id) VALUES(?,?,?,?)";
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param("ssii", $keterangan, $obat, $totalharga, $idReservasi);
+
 	$stmt->execute();
+
 	if ($stmt->affected_rows > 0) {
-		if ($tanggalbalik != "") {
-			$status = "1";
-			$sql = "INSERT into reservasis(tanggal_reservasi, pengguna_id, status_reservasi, jam_id) VALUES(?,?,?,?)";
-			$stmt = $conn->prepare($sql);
-			$stmt->bind_param("siss", $tanggalbalik, $idPengguna, $status, $jam);
-			$stmt->execute();
-			if ($stmt->affected_rows > 0) {
-				$arr = ["result" => "success", "message" => "Reservasi berhasil"];
-			} else {
-				$arr = ["result" => "error", "message" => "Reservasi gagal"];
-			}
-			$arr = update($conn, $idReservasi);
-		} else {
-			$arr = update($conn, $idReservasi);
-		}
+		$arr = updateReservasiInsertDetailPerawatan($conn, $idReservasi, $daftarPerawatan, $stmt->insert_id);
 	} else {
 		$arr = ["result" => "error", "message" => "Konsultasi gagal tersimpan"];
 	}

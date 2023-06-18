@@ -109,7 +109,8 @@ session_start();
     <main class="main" id="top">
         <nav class="py-3" data-navbar-on-scroll="data-navbar-on-scroll">
             <div class="container">
-                <a class="navbar-brand" href="index.php"><img src="assets/img/gallery/logo.png" width="118" alt="logo" /></a>
+                <a class="navbar-brand" href="index.php"><img src="assets/img/gallery/logo.png" width="118"
+                        alt="logo" /></a>
                 <a href="index.php"><button type="button" class="btnBack">Back</button></a>
             </div>
         </nav>
@@ -159,14 +160,50 @@ session_start();
 
                                 $conn = new mysqli("localhost", "root", "", "dbmagang");
                                 $pengguna = $_SESSION['email'];
-                                if ($pengguna == "klinik") {
+                                $idpengguna = $_SESSION['idPengguna'];
+                                if ($idpengguna == "1" || $idpengguna == "2") {
+                                    $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi,J.hari, J.jam, R.keluhan, R.id, R.status_reservasi
+                                                FROM penggunas as P 
+                                                INNER JOIN reservasis as R on P.id = R.pengguna_id
+                                                INNER JOIN jams as J on J.id = R.jam_id
+                                                WHERE date(R.tanggal_reservasi) >= curdate() and J.dokter_id =?
+                                                order by date(R.tanggal_reservasi), J.jam, R.id";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bind_param('i', $idpengguna);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<tr class='alert tabel' role='alert'>";
+                                            echo "<td class='tabel'>" . $row["nama"] . "</td>";
+                                            echo "<td class='tabel'>" . $row['hari'] . ", " . date("d F Y", strtotime($row["tanggalReservasi"])) . "</td>";
+                                            echo "<td class='tabel'>" . $row["jam"] . "</td>";
+                                            echo "<td class='tabel'>" . $row["keluhan"] . "</td>";
+                                            echo "<td class='tabel'>" . $row["status_reservasi"] . "</td>";
+                                            if (($row["status_reservasi"] == "baru")) {
+                                                echo "<td class='tabel'><a href='insertkonsul.php?idReservasi=" . $row["id"] . "'>
+                                            <button type='button' class='btnDetil m-2'>Konfirmasi</button></a>";
+                                            } else {
+                                                echo "<td>";
+                                            }
+                                            //echo "<br>";
+                                            if (($row["status_reservasi"] == "dibatalkan pasien") || ($row["status_reservasi"] == "dibatalkan klinik") || ($row["status_reservasi"] == "selesai")) {
+                                                echo "<button type='button' class='btnDetil' 
+                                            id='btnBatalkan' idReservasiBatal='" . $row["id"] . "' hidden>Batalkan</button></td>";
+                                            } else {
+                                                echo "&nbsp; <button type='button' class='btnDetil' 
+                                            id='btnBatalkan' idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
+                                            }
+                                            echo "</tr>";
+                                        }
+                                    }
+                                } else if ($idpengguna == "3") {
                                     $sql = "SELECT P.nama, date(R.tanggal_reservasi) as tanggalReservasi,J.hari, J.jam, R.keluhan, R.id, R.status_reservasi
                                                 FROM penggunas as P 
                                                 INNER JOIN reservasis as R on P.id = R.pengguna_id
                                                 INNER JOIN jams as J on J.id = R.jam_id
                                                 WHERE date(R.tanggal_reservasi) >= curdate()
                                                 order by date(R.tanggal_reservasi), J.jam, R.id";
-
                                     $result = $conn->query($sql);
                                     if ($result->num_rows > 0) {
                                         while ($row = $result->fetch_assoc()) {
@@ -178,17 +215,15 @@ session_start();
                                             echo "<td class='tabel'>" . $row["status_reservasi"] . "</td>";
                                             if (($row["status_reservasi"] == "baru")) {
                                                 echo "<td class='tabel'><a href='insertkonsul.php?idReservasi=" . $row["id"] . "'>
-                                            <button type='button' class='btnDetil'>Konfirmasi</button></a>";
+                                            <button type='button' class='btnDetil m-2'>Konfirmasi</button></a>";
+                                            } else {
+                                                echo "<td>";
                                             }
-                                            else{
-                                                echo "<td></td>";
-                                            }
-                                            
-                                            if (($row["status_reservasi"] == "dibatalkan pasien") || ($row["status_reservasi"] == "dibatalkan klinik")) {
+                                            //echo "<br>";
+                                            if (($row["status_reservasi"] == "dibatalkan pasien") || ($row["status_reservasi"] == "dibatalkan klinik") || ($row["status_reservasi"] == "selesai")) {
                                                 echo "<button type='button' class='btnDetil' 
                                             id='btnBatalkan' idReservasiBatal='" . $row["id"] . "' hidden>Batalkan</button></td>";
-                                            }
-                                            else{
+                                            } else {
                                                 echo "&nbsp; <button type='button' class='btnDetil' 
                                             id='btnBatalkan' idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
                                             }
@@ -216,11 +251,10 @@ session_start();
                                             echo "<td class='tabel'>" . $row["jam"] . "</td>";
                                             echo "<td class='tabel'>" . $row["keluhan"] . "</td>";
                                             echo "<td class='tabel'>" . $row["status_reservasi"] . "</td>";
-                                            if (($row["status_reservasi"] == "dibatalkan pasien") || ($row["status_reservasi"] == "dibatalkan klinik")) {
+                                            if (($row["status_reservasi"] == "dibatalkan pasien") || ($row["status_reservasi"] == "dibatalkan klinik") || ($row["status_reservasi"] == "selesai")) {
                                                 echo "<td class='tabel'><button type='button' class='btnDetil' 
                                              idReservasiBatal='" . $row["id"] . "' hidden>Batalkan</button></td>";
-                                            }
-                                            else{
+                                            } else {
                                                 echo "<td class='tabel'><button type='button' class='btnDetil' 
                                                  idReservasiBatal='" . $row["id"] . "'>Batalkan</button></td>";
                                             }
@@ -240,25 +274,27 @@ session_start();
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&amp;display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fjalla+One&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&amp;display=swap"
+        rel="stylesheet">
 
 
 </body>
 <script>
-    $('body').on('click', '#btnSearch', function() {
+    $('body').on('click', '#btnSearch', function () {
         var key = $("#keySearch").val();
         $.post("WS/reservasi-search-nama.php", {
             key: key
-        }).done(function(data) {
+        }).done(function (data) {
             $('#tabelReservasi').html(data);
         });
     });
 
-    $('body').on('click', '.btnDetil', function() {
+    $('body').on('click', '.btnDetil', function () {
         var idReservasi = $(this).attr('idReservasiBatal');
         $.post("WS/reservasi-batalkan.php", {
             idReservasi: idReservasi,
-        }).done(function(data) {
+        }).done(function (data) {
             var result = JSON.parse(data);
             if (result.result == "success") {
                 alert(result.message);

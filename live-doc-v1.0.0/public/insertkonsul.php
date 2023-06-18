@@ -37,7 +37,7 @@
         <div class="" style="margin-top: 50px;">
           <div class="col-md-7 py-6">
             <h3>Konsultasi</h3>
-            
+
             <?php
             date_default_timezone_set("Asia/Jakarta");
             $conn = new mysqli("localhost", "root", "", "dbmagang");
@@ -65,7 +65,7 @@
             <p>Keluhan pasien:
               <?php
               echo $keluhan
-              ?>
+                ?>
             </p>
             <form action="#" method="post">
               <div class="row">
@@ -74,7 +74,7 @@
                     <label class="txtLabel">Full Name</label>
                     <?php
                     echo "<input type='text' class='form-control' id='nama' value='" . $nama . "' disabled>"
-                    ?>
+                      ?>
 
                   </div>
                 </div>
@@ -103,7 +103,7 @@
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                           while ($row = $result->fetch_assoc()) {
-                            echo "<option value='" . $row['id'] . "' harga='" . $row['standar_harga'] . "' nama='".$row['nama']."'>" . $row['nama'] . "</option>";
+                            echo "<option value='" . $row['id'] . "' harga='" . $row['standar_harga'] . "' nama='" . $row['nama'] . "'>" . $row['nama'] . "</option>";
                           }
                         }
                         ?>
@@ -151,7 +151,8 @@
               <div>
                 <div class="form-group last mb-3">
                   <label class="txtLabel">Keterangan</label>
-                  <textarea class="form-control" style="height: 100px;" placeholder="keterangan" id="keterangan"></textarea>
+                  <textarea class="form-control" style="height: 100px;" placeholder="keterangan"
+                    id="keterangan"></textarea>
                 </div>
               </div>
               <br>
@@ -169,77 +170,9 @@
                   </div>
                 </div>
               </div>
-              <input type="checkbox" id="checkTanggalBalik" class="txtLabel"> Tanggal Balik
-              <br><br>
-
-              <div id="divTanggalBalik" hidden>
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="form-group first">
-                      <label class="txtLabel">Dokter</label>
-                      <select class="form-control" required id="dokter">
-                        <?php
-                        $sql = "SELECT * from dokters";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-
-                        if ($result->num_rows > 0) {
-
-                          $curhour = date("H.i");
-                          while ($row = $result->fetch_assoc()) {
-                            echo "<option value='" . $row["id"] . "'>" . $row["nama"] . "</option>";
-                          }
-                        }
-
-                        ?>
-                      </select>
-                      <span class="select-arrow"></span>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <label id="test" class="txtLabel">Tanggal Balik</label>
-                    <input type="date" value=<?php echo "'" . date('Y-m-d') . "'"; ?> class="form-control" id="tanggal_balik">
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="txtLabel">Jam Datang</label>
-                      <select class="form-control" id="jam">
-                        <?php
-                        $tanggalHariIni = date('Y-m-d');
-                        $dokter = 1;
-                        $sql = "SELECT * from jams
-														where id not in (select jam_id
-														from reservasis
-														where tanggal_reservasi = ?) and dokter_id = ?";
-
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("si", $tanggalHariIni, $dokter);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-
-                        if ($result->num_rows > 0) {
-                          while ($row = $result->fetch_assoc()) {
-                            if ((strtotime($row["jam"]) >= strtotime($curhour)) || $row['jam'] == 'lainnya') {
-                              echo "<option value='" . $row["id"] . "'>" . $row["jam"] . "</option>";
-                            }
-                          }
-                        }
-
-                        ?>
-                      </select>
-                      <span class="select-arrow"></span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
               <br>
               <input type="hidden" value=<?php echo "'" . $idReservasi . "'" ?> id="idReservasi">
-              <input type="submit" value="Konfirmasi" id="btnKonfirmasi" class="btn px-5 btn-primary">
+              <button id="btnKonfirmasi" class="btn px-5 btn-primary">Konfirmasi</button>
 
             </form>
           </div>
@@ -251,32 +184,44 @@
   </div>
 
   <script>
-    $('body').on('click', '#btnKonfirmasi', function() {
-
+    $('body').on('click', '#btnKonfirmasi', function (event) {
+      event.preventDefault();
       var keterangan = $("#keterangan").val();
       var obat = $("#obat").val();
-      var biaya = $("#biaya").val();
+      var totalHarga = $("#totalHarga").val();
       var idReservasi = $("#idReservasi").val();
       var idPengguna = $("#idPengguna").val();
+      var daftarPerawatan = [];
+
+      $.each($("#daftar > tr"), function () {
+        daftarPerawatan.push({
+          idPerawatan: $(this).attr('idPerawatan'),
+          harga: $(this).attr('harga'),
+          posisiGigi: $(this).attr('posisi')
+        });
+      });
+
 
       var tanggalbalik = "";
       var jam = "";
-      alert(tanggal);
-      if ($("#checkTanggalBalik").is(":checked")) {
-        tanggalbalik = $("#tanggal_balik").val();
-        jam = $("#jam").val();
-      }
+      // alert(tanggal);
+      // if ($("#checkTanggalBalik").is(":checked")) {
+      //   tanggalbalik = $("#tanggal_balik").val();
+      //   jam = $("#jam").val();
+      // }
 
       $.post("WS/konsultasi-insert.php", {
         keterangan: keterangan,
         obat: obat,
-        biaya: biaya,
+        totalHarga: totalHarga,
         tanggalbalik: tanggalbalik,
         idReservasi: idReservasi,
         idPengguna: idPengguna,
         jam: jam,
+        daftarPerawatan: daftarPerawatan,
 
-      }).done(function(data) {
+
+      }).done(function (data) {
         var result = JSON.parse(data);
         if (result.result == "success") {
           alert(result.message);
@@ -287,7 +232,7 @@
       });
     });
 
-    $('body').on('change', '#tanggal_balik', function() {
+    $('body').on('change', '#tanggal_balik', function () {
       var tanggalReservasi = $("#tanggal_balik").val();
       var dokter = $("#dokter").val();
       var user = "kinik";
@@ -297,7 +242,7 @@
         dokter: dokter,
         user: user
 
-      }).done(function(data) {
+      }).done(function (data) {
         if (data != "warning") {
           $("#jam").html(data);
           $("#btnKonfirmasi").attr("disabled", false);
@@ -311,7 +256,7 @@
       });
     });
 
-    $('body').on('click', '#checkTanggalBalik', function() {
+    $('body').on('click', '#checkTanggalBalik', function () {
       if ($(this).is(":checked")) {
         $("#divTanggalBalik").prop("hidden", false);
       } else {
@@ -320,7 +265,7 @@
       }
     });
 
-    $('body').on('change', '#dokter', function() {
+    $('body').on('change', '#dokter', function () {
       var tanggalReservasi = $("#tanggal_balik").val();
       var dokter = $('#dokter').val();
       var user = "klinik";
@@ -330,7 +275,7 @@
         dokter: dokter,
         user: user
 
-      }).done(function(data) {
+      }).done(function (data) {
         if (data != "warning") {
           $("#jam").html(data);
           $("#btnKonfirmasi").attr("disabled", false);
@@ -344,16 +289,17 @@
       });
     });
 
-    $('body').on('change', '#inputJenis', function() {
+    $('body').on('change', '#inputJenis', function () {
       var pilihan = $('#inputJenis option:selected').attr('harga');
       $('#harga').val(pilihan);
     });
 
-    $('body').on('click', '#btnTambah', function() {
+    $('body').on('click', '#btnTambah', function () {
       var harga = $('#harga').val();
       var posisi = $('#posisi').val();
       var jenis = $('#inputJenis option:selected').attr('nama');
-      var baris = "<tr id='jenisPerawatan' harga='" + harga + "' posisi='" + posisi + "' jenis='" + jenis + "'>";
+      var idPerawatan = $('#inputJenis').val();
+      var baris = "<tr id='jenisPerawatan' harga='" + harga + "' posisi='" + posisi + "' jenis='" + jenis + "' idPerawatan='" + idPerawatan + "'>";
       baris += "<td>";
       baris += jenis;
       baris += "</td>";
@@ -364,7 +310,7 @@
       baris += harga;
       baris += "</td>";
       baris += "<td>";
-      baris += "<button class='btn btn-outline-secondary btnHapus' type='text' value='"+ harga +"'>Hapus</button>";
+      baris += "<button class='btn btn-outline-secondary btnHapus' type='text' value='" + harga + "'>Hapus</button>";
       baris += "</td>";
       baris += "</tr>";
       $('#daftar').append(baris);
@@ -374,13 +320,13 @@
       $('#totalHarga').val(totalHarga);
     });
 
-    $('body').on('click', '.btnHapus', function(){   //untuk hapus <tr> nya
-			$(this).parent().parent().remove();
+    $('body').on('click', '.btnHapus', function () {   //untuk hapus <tr> nya
+      $(this).parent().parent().remove();
       var hargaHapus = Number($(this).val());
       var totalHargaSebelum = Number($('#totalHarga').val());
       var totalHarga = totalHargaSebelum - hargaHapus;
       $('#totalHarga').val(totalHarga);
-		});
+    });
   </script>
 </body>
 

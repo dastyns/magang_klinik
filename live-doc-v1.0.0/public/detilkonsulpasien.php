@@ -79,7 +79,7 @@
                                                     <h6>Obat</h6>
                                                 </th>
                                                 <th>
-                                                    <h6>Biaya</h6>
+                                                    <h6>Total Biaya</h6>
                                                 </th>
                                                 <th>
                                                     <h6>Ulasan</h6>
@@ -88,13 +88,13 @@
 
                                             <?php
                                             $conn = new mysqli("localhost", "root", "", "dbmagang");
-                                            $sql = "SELECT K.id, date(K.tanggal_konsultasi) as tanggal_konsultasi, K.keterangan, K.obat, K.biaya, U.ulasan
+                                            $sql = "SELECT K.id, date(R.tanggal_reservasi) as tanggal_konsultasi, K.keterangan, K.obat, K.total_harga, U.ulasan
                                             from konsultasis as K
                                             LEFT JOIN reservasis AS R ON K.reservasi_id = R.id 
                                             LEFT JOIN penggunas AS P ON R.pengguna_id = P.id
                                             LEFT JOIN ulasans AS U ON K.id = U.konsultasi_id
                                             where P.email = ?
-                                            ORDER BY K.tanggal_konsultasi desc";
+                                            ORDER BY R.tanggal_reservasi desc";
 
                                             $stmt = $conn->prepare($sql);
                                             $stmt->bind_param("s", $email);
