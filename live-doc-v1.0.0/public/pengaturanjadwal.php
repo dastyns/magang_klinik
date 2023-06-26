@@ -138,7 +138,7 @@
             }
         }
 
-        $sql1 = "SELECT jam, hari, status FROM jams where dokter_id=? and hari!='semua'";
+        $sql1 = "SELECT id, jam, hari, status FROM jams where dokter_id=? and hari!='semua'";
         $stmt = $conn->prepare($sql1);
         $stmt->bind_param("i",  $id);
         $stmt->execute();
@@ -172,51 +172,51 @@
                     <form>
                         <div class="col-md-12">
                             <div class="text-right"><button type='button' class='btnDetil' id='btnSimpan'>SIMPAN</button></div><br>
-                                <input type="hidden" name="idDokter" id="idDokter" value="<?php echo $_SESSION["idPengguna"] ?>">
-                                <div class="table-wrap" id="tabelReservasi">
-                                    <table class="table table-responsive-xl  align-items-center">
-                                        <tr class="tabel">
-                                            <th>Jam</th>
-                                            <?php
+                            <input type="hidden" name="idDokter" id="idDokter" value="<?php echo $_SESSION["idPengguna"] ?>">
+                            <div class="table-wrap" id="tabelReservasi">
+                                <table class="table table-responsive-xl  align-items-center">
+                                    <tr class="tabel">
+                                        <th>Jam</th>
+                                        <?php
+                                        foreach ($dataHari as $dh) {
+                                            echo "<th>" . $dh['hari'] . "</th>";
+                                        }
+                                        ?>
+                                    </tr>
+                                    <tr>
+                                        <?php
+                                        foreach ($dataJam as $dj) {
+                                            echo "<tr>";
+                                            echo "<td class='tabel'>" . $dj['jam'] . "</td>";
                                             foreach ($dataHari as $dh) {
-                                                echo "<th>" . $dh['hari'] . "</th>";
-                                            }
-                                            ?>
-                                        </tr>
-                                        <tr>
-                                            <?php
-                                            foreach ($dataJam as $dj) {
-                                                echo "<tr>";
-                                                echo "<td class='tabel'>" . $dj['jam'] . "</td>";
-                                                foreach ($dataHari as $dh) {
-                                                    echo "<td class='tabel'>";
-                                                    foreach ($dataHariStatus as $djs) {
-                                                        if ($djs['hari'] == $dh['hari'] && $djs['jam'] == $dj['jam']) {
-                                                            if ($djs['status'] == "aktif") {
-                                                                echo "<div class='form__group'>";
-                                                                // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='aktif' class='checkboxjadwal' checked>";
-                                                                echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='aktif' class='checkboxjadwal' checked>";
-                                                                echo "</div>";
-                                                            } else {
-                                                                echo "<div class='form__group'>";
-                                                                // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='nonaktif' class='checkboxjadwal'>";
-                                                                echo "<input type='checkbox' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='nonaktif' class='checkboxjadwal'>";
-                                                                echo "</div>";
-                                                            }
+                                                echo "<td class='tabel'>";
+                                                foreach ($dataHariStatus as $djs) {
+                                                    if ($djs['hari'] == $dh['hari'] && $djs['jam'] == $dj['jam']) {
+                                                        if ($djs['status'] == "aktif") {
+                                                            echo "<div class='form__group'>";
+                                                            // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='aktif' class='checkboxjadwal' checked>";
+                                                            echo "<input type='checkbox' id='" . $djs['id'] . "' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='aktif' class='checkboxjadwal' checked>";
+                                                            echo "</div>";
+                                                        } else {
+                                                            echo "<div class='form__group'>";
+                                                            // echo "<input type='checkbox' name='slot[" . $dh['hari'] . "][" . $dj['jam'] . "]' value='nonaktif' class='checkboxjadwal'>";
+                                                            echo "<input type='checkbox' id='" . $djs['id'] . "' hari='" . $dh['hari'] . "' jam='" . $dj['jam'] . "' name='slot' value='nonaktif' class='checkboxjadwal'>";
+                                                            echo "</div>";
                                                         }
                                                     }
-                                                    echo "</td>";
                                                 }
-                                                echo "</tr>";
+                                                echo "</td>";
                                             }
-                                            ?>
-                                        </tr>
-                                    </table>
-                                </div>
+                                            echo "</tr>";
+                                        }
+                                        ?>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                 </div>
-                </form>
+            </div>
+            </form>
         </section>
     </main>
 
@@ -225,13 +225,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&amp;family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&amp;display=swap" rel="stylesheet">
     <script>
         $('body').on('change', '.checkboxjadwal', function() {
+            var t = $(this);
+            var idDokter = $("#idDokter").val();
+            var jamId = t.attr('id');
+
             var curValue = $(this).val();
             if (curValue == "aktif") {
-                $(this).val("nonaktif");
+                t.val("nonaktif");
             } else {
-                $(this).val("aktif");
+                t.val("aktif");
             }
-            var curValue = $(this).val();
+            var curValue = t.val();
+            
+
+            $.post("WS/check-slot.php", {
+                slot: jamId,
+                dokter: idDokter,
+
+            }).done(function(data) {
+                var result = JSON.parse(data);
+                if (result.result == "success") {
+                    alert(result.message);
+                    t.prop('checked', true);
+                    t.val("aktif");
+                    alert(t.val());
+                }
+            });
         });
 
 
